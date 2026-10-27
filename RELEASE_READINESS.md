@@ -1,7 +1,7 @@
-# Release readiness — Architecture Check 0.1.0-alpha.0
+# Release readiness — Architecture Check 0.1.0
 
-Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · **Verdict: READY FOR HUMAN REVIEW** (on GitHub, not
-published to npm; npm publication needs explicit approval).
+Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · **Verdict: READY FOR HUMAN REVIEW** (on GitHub;
+npm release of 0.1.0 approved by the user on 2026-10-27, published by the user with 2FA).
 
 ## Verified (commands run on 2026-10-27, Node v25.9.0)
 
@@ -36,7 +36,7 @@ published to npm; npm publication needs explicit approval).
       templates, CI workflow (actions pinned by SHA). Demo output audited by hand: 4/4 findings point at the correct
       file and line; counts (7 declared, 8 as-built elements, 6 relationships) correct.
 - [~] P6: Repository creation, push, CI and the Action self-test were approved by the user on 2026-10-27 and done.
-  npm publication and release tags are **not approved** and not done.
+  Release 0.1.0 (tag, GitHub release, npm) approved on 2026-10-27.
 
 ## GitHub verification (2026-10-27)
 

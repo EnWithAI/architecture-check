@@ -3,7 +3,7 @@
   "kind": "architecture-check-report",
   "tool": {
     "name": "architecture-check",
-    "version": "0.1.0-alpha.0"
+    "version": "0.1.0"
   },
   "command": "check",
   "declared_model": {
@@ -635,7 +635,7 @@
   ],
   "run_metadata": {
     "generated_at": "2026-01-01T00:00:00.000Z",
-    "tool_version": "0.1.0-alpha.0",
+    "tool_version": "0.1.0",
     "node_version": "normalized",
     "duration_ms": 0
   }
