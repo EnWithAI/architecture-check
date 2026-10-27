@@ -1,7 +1,7 @@
 # Release readiness — Architecture Check 0.1.0-alpha.0
 
-Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · **Verdict: READY FOR HUMAN REVIEW** (not published; no
-remote repository; publication needs explicit approval).
+Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · **Verdict: READY FOR HUMAN REVIEW** (on GitHub, not
+published to npm; npm publication needs explicit approval).
 
 ## Verified (commands run on 2026-10-27, Node v25.9.0)
 
@@ -28,13 +28,23 @@ remote repository; publication needs explicit approval).
       executed.
 - [x] P3: gate commands above; adversarial fixture A9 (unsafe DSL, crafted names, symlinks, token and URL credentials,
       YAML bomb); clean install; dependency/licence review.
-- [~] P4: Action implemented and tested in-process; least privilege, env-passed inputs, `pull_request` only.
-  **Not run on GitHub runners** (no remote).
+- [x] P4: Action implemented and tested in-process; least privilege, env-passed inputs, `pull_request` only. Run on
+      GitHub runners 2026-10-27 (see "GitHub verification"). The action's own dependency-install step was skipped in that
+      run because the job had already run `npm ci`; it is not yet exercised on a runner.
 - [x] P5: README with a 60-second demo, SPEC, CONFIG, ACTION, ARCHITECTURE, THREAT_MODEL, SECURITY, CONTRIBUTING,
       CODE_OF_CONDUCT, CHANGELOG, LICENSE, NOTICE, ATTRIBUTION, TRADEMARKS, REFERENCES, provenance file, issue/PR
       templates, CI workflow (actions pinned by SHA). Demo output audited by hand: 4/4 findings point at the correct
       file and line; counts (7 declared, 8 as-built elements, 6 relationships) correct.
-- [ ] P6: STOP. Repository creation, push, CI, Action self-test and npm publication each need explicit approval.
+- [~] P6: Repository creation, push, CI and the Action self-test were approved by the user on 2026-10-27 and done.
+  npm publication and release tags are **not approved** and not done.
+
+## GitHub verification (2026-10-27)
+
+| Check                                                                       | Result                                                                                                                                                                                    |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repository                                                                  | public `EnWithAI/architecture-check`, `main` = `7aad488`                                                                                                                                  |
+| CI on `main` (run 40509609835)                                              | green on Node 22, 24 and 26: `npm ci`, `check:all`, license audit, `npm pack --dry-run`                                                                                                   |
+| Action self-test (draft #1, empty commit, closed unmerged; run 40509753161) | passed: `uses: ./` on `examples/demo` with `graph: graph.json` reported 4 findings and policy fail (report-only, as expected for the demo); artifact `architecture-check-report` uploaded |
 
 ## Process note
 

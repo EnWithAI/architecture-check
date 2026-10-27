@@ -38,5 +38,7 @@ Upload the SARIF file in a separate step that you add, with `security-events: wr
 
 ## Verification status
 
-The action is tested in-process (`test/action.test.ts`). The repository's CI runs it on the demo for pull requests
-(`action-self-test`); **that run has not happened yet** (no remote repository).
+The action is tested in-process (`test/action.test.ts`), and the repository's CI runs it on the demo for every pull
+request (`action-self-test`). First run on GitHub: 2026-10-27, EnWithAI/architecture-check#1, passed (4 findings,
+policy fail, report artifact uploaded). In that job `npm ci` had already run, so the dependency-install step of the
+action was skipped; a consumer workflow that pins a release will exercise it.
