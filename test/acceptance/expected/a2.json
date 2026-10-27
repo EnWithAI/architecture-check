@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "container-undeclared", "status": "verified_static_fact", "severity": "medium", "subject": "worker",
+      "evidence": [["docker-compose.yml", 14], ["worker/Dockerfile", 1]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

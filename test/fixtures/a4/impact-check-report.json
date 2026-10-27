@@ -1,0 +1,11 @@
+{
+  "schema_version": "2.0",
+  "repo_revision": { "ref": "HEAD", "commit": "0000000000000000000000000000000000000001", "kind": "commit" },
+  "base_revision": { "ref": "main", "commit": "0000000000000000000000000000000000000000", "kind": "commit" },
+  "changed_files": [
+    { "path": "README.md", "previous_path": null, "status": "modified" },
+    { "path": "api/src/payments/old.ts", "previous_path": null, "status": "deleted" },
+    { "path": "web/src/cart/cart.ts", "previous_path": null, "status": "modified" }
+  ],
+  "findings": []
+}

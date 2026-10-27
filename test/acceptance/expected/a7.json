@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "technology-mismatch", "status": "hypothesis", "severity": "low", "subject": "shop.api",
+      "evidence": [["api/Dockerfile", 1], ["architecture/workspace.dsl", 12]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

@@ -1,0 +1,8 @@
+services:
+  app:
+    build: ./app
+    environment:
+      GITHUB_TOKEN: __FAKE_GITHUB_TOKEN__
+      UPSTREAM: https://user:hunter2@app:8080/x
+  "evil\"name\n<img src=x onerror=alert(1)> @team":
+    image: nginx:1.27

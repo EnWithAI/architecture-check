@@ -1,0 +1,15 @@
+services:
+  web:
+    build: ./web
+    depends_on:
+      - api
+  api:
+    build: ./api
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://app:secret@db:5432/app
+  db:
+    image: postgres:16
+  worker:
+    build: ./worker

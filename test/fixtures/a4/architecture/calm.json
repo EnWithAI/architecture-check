@@ -1,0 +1,86 @@
+{
+  "$schema": "https://calm.finos.org/release/1.3/meta/calm.json",
+  "nodes": [
+    {
+      "unique-id": "customer",
+      "node-type": "actor",
+      "name": "Customer",
+      "description": "A shopper"
+    },
+    {
+      "unique-id": "shop",
+      "node-type": "system",
+      "name": "Shop",
+      "description": "Fixture A11: the A4 model in CALM"
+    },
+    {
+      "unique-id": "shop.web",
+      "node-type": "webclient",
+      "name": "Web",
+      "description": "Storefront",
+      "metadata": [
+        { "technology": "Node.js" },
+        { "commons.source": "web", "commons.allowed-dependencies": ["shop.api"] }
+      ]
+    },
+    {
+      "unique-id": "shop.api",
+      "node-type": "service",
+      "name": "API",
+      "description": "Orders API",
+      "metadata": { "technology": "Node.js", "commons.source": "api" }
+    },
+    {
+      "unique-id": "shop.api.orders",
+      "node-type": "component",
+      "name": "Orders",
+      "description": "Order handling",
+      "metadata": { "commons.source": "api/src/orders" }
+    },
+    {
+      "unique-id": "shop.db",
+      "node-type": "database",
+      "name": "Database",
+      "description": "",
+      "metadata": { "technology": "PostgreSQL", "commons.source": "db" }
+    },
+    {
+      "unique-id": "shop.shared",
+      "node-type": "service",
+      "name": "Shared library",
+      "description": "Money helpers",
+      "metadata": { "technology": "TypeScript", "commons.source": ["shared"] }
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "shop-composed-of",
+      "relationship-type": {
+        "composed-of": { "container": "shop", "nodes": ["shop.web", "shop.api", "shop.db", "shop.shared"] }
+      }
+    },
+    {
+      "unique-id": "api-composed-of",
+      "relationship-type": { "composed-of": { "container": "shop.api", "nodes": ["shop.api.orders"] } }
+    },
+    {
+      "unique-id": "customer-uses-web",
+      "description": "Uses",
+      "relationship-type": { "interacts": { "actor": "customer", "nodes": ["shop.web"] } }
+    },
+    {
+      "unique-id": "web-calls-api",
+      "description": "Calls",
+      "relationship-type": {
+        "connects": { "source": { "node": "shop.web" }, "destination": { "node": "shop.api" } }
+      }
+    },
+    {
+      "unique-id": "api-uses-db",
+      "description": "Reads and writes",
+      "relationship-type": {
+        "connects": { "source": { "node": "shop.api" }, "destination": { "node": "shop.db" } }
+      }
+    }
+  ]
+}

@@ -1,0 +1,646 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/enwithai/architecture-check/schema/architecture-check-report.schema.json",
+  "title": "Architecture Check report",
+  "description": "Drift between a declared architecture model (Structurizr DSL or FINOS CALM) and the as-built model derived from static evidence. Schema 1.0. There is no score.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "tool",
+    "command",
+    "declared_model",
+    "inputs",
+    "as_built",
+    "mapping",
+    "complete_mapping",
+    "findings",
+    "summary",
+    "policy",
+    "ignored_containers",
+    "coverage_limitations",
+    "run_metadata"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "kind": {
+      "const": "architecture-check-report"
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {
+          "const": "architecture-check"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "command": {
+      "enum": ["derive", "analyze", "check"]
+    },
+    "declared_model": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "format", "schema", "sha256", "usable", "elements", "relationships"],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "format": {
+              "enum": ["dsl", "calm"]
+            },
+            "schema": {
+              "type": ["string", "null"]
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "usable": {
+              "type": "boolean"
+            },
+            "elements": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "relationships": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      ]
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["graph", "impact_check"],
+      "properties": {
+        "graph": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/input"
+            }
+          ]
+        },
+        "impact_check": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/input"
+            }
+          ]
+        }
+      }
+    },
+    "as_built": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system_name", "elements", "relationships", "interfaces"],
+      "properties": {
+        "system_name": {
+          "type": "string"
+        },
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/element"
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relationship"
+          }
+        },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/interface"
+          }
+        }
+      }
+    },
+    "mapping": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mapping"
+      }
+    },
+    "complete_mapping": {
+      "type": ["boolean", "null"]
+    },
+    "findings": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "findings",
+        "by_status",
+        "by_severity",
+        "by_rule",
+        "as_built_elements",
+        "as_built_relationships",
+        "interfaces"
+      ],
+      "properties": {
+        "findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verified_static_fact", "hypothesis", "unknown"],
+          "properties": {
+            "verified_static_fact": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "hypothesis": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "unknown": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["high", "medium", "low", "info"],
+          "properties": {
+            "high": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "medium": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "low": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "info": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "by_rule": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "as_built_elements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "as_built_relationships": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "interfaces": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evaluated", "result", "fail_on_severity", "fail_on_statuses", "violations"],
+      "properties": {
+        "evaluated": {
+          "type": "boolean"
+        },
+        "result": {
+          "enum": ["pass", "fail", "not_evaluated"]
+        },
+        "fail_on_severity": {
+          "enum": ["high", "medium", "low", "info", "never"]
+        },
+        "fail_on_statuses": {
+          "type": "array",
+          "items": {
+            "enum": ["verified_static_fact", "hypothesis", "unknown"]
+          }
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ignored_containers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "coverage_limitations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/limitation"
+      }
+    },
+    "run_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generated_at", "tool_version", "node_version", "duration_ms"],
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tool_version": {
+          "type": "string"
+        },
+        "node_version": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "path", "line_start", "line_end", "provenance", "detail"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "model-element",
+            "model-relationship",
+            "model-construct",
+            "model-reference",
+            "compose-service",
+            "compose-dependency",
+            "compose-environment",
+            "compose-image",
+            "dockerfile",
+            "k8s-resource",
+            "k8s-image",
+            "k8s-environment",
+            "import",
+            "external-import",
+            "component-directory",
+            "interface-file"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "line_start": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "line_end": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "provenance": {
+          "enum": ["declared", "observed", "graph", "inferred"]
+        },
+        "detail": {
+          "type": "string"
+        }
+      }
+    },
+    "element": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "name",
+        "aliases",
+        "parent",
+        "node_type",
+        "origins",
+        "source_paths",
+        "packages",
+        "technology",
+        "descriptors",
+        "evidence"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)?$"
+        },
+        "kind": {
+          "enum": ["container", "component", "external_system"]
+        },
+        "name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parent": {
+          "type": ["string", "null"]
+        },
+        "node_type": {
+          "enum": ["service", "database", "component", "ecosystem"]
+        },
+        "origins": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "compose",
+              "dockerfile",
+              "kubernetes",
+              "declared-source",
+              "workspace-package",
+              "graph",
+              "vendor-sdk"
+            ]
+          }
+        },
+        "source_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "technology": {
+          "type": ["string", "null"]
+        },
+        "descriptors": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "labels", "status", "evidence", "evidence_total"],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "enum": ["verified_static_fact", "hypothesis"]
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "evidence_total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "interface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "line", "format", "version", "owner"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "format": {
+          "enum": ["openapi", "asyncapi"]
+        },
+        "version": {
+          "type": "string"
+        },
+        "owner": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared_id", "kind", "as_built_ids", "match", "ignored"],
+      "properties": {
+        "declared_id": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": ["person", "software_system", "container", "component", "external_system"]
+        },
+        "as_built_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "match": {
+          "enum": ["source", "name", "none", "not-applicable"]
+        },
+        "ignored": {
+          "type": "boolean"
+        }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "rule_id",
+        "category",
+        "severity",
+        "status",
+        "confidence",
+        "is_heuristic",
+        "subject",
+        "summary",
+        "declared_elements",
+        "as_built_elements",
+        "evidence",
+        "evidence_total",
+        "recommended_human_action",
+        "suggested_model_change",
+        "change_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^ACF-[0-9A-F]{10}$"
+        },
+        "rule_id": {
+          "enum": [
+            "model-invalid",
+            "model-reference-invalid",
+            "model-stale-reference",
+            "container-undeclared",
+            "element-source-missing",
+            "component-undeclared",
+            "relationship-undeclared",
+            "boundary-violation",
+            "relationship-unobserved",
+            "interface-unowned",
+            "technology-mismatch",
+            "external-system-undeclared"
+          ]
+        },
+        "category": {
+          "enum": ["integrity", "coverage", "relationships", "technology"]
+        },
+        "severity": {
+          "enum": ["high", "medium", "low", "info"]
+        },
+        "status": {
+          "enum": ["verified_static_fact", "hypothesis", "unknown"]
+        },
+        "confidence": {
+          "enum": ["high", "medium", "low"]
+        },
+        "is_heuristic": {
+          "type": "boolean"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "declared_elements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "as_built_elements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        },
+        "evidence_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recommended_human_action": {
+          "type": "string"
+        },
+        "suggested_model_change": {
+          "type": ["string", "null"]
+        },
+        "change_status": {
+          "enum": ["introduced", "pre-existing", null]
+        }
+      }
+    },
+    "limitation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "count", "paths"],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "paths": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schema_version", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

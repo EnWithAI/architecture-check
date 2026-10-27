@@ -1,0 +1,384 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "architecture-check",
+          "semanticVersion": "0.1.0-alpha.0",
+          "rules": [
+            {
+              "id": "boundary-violation",
+              "name": "boundary-violation",
+              "shortDescription": {
+                "text": "Observed dependency crosses a declared boundary"
+              },
+              "fullDescription": {
+                "text": "The element declares commons.allowed-dependencies, and it depends on an element that is not allowed."
+              },
+              "help": {
+                "text": "Remove the dependency, or change the declared rule if the dependency is intended."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "category": "relationships",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "component-undeclared",
+              "name": "component-undeclared",
+              "shortDescription": {
+                "text": "Source directory is not a declared component"
+              },
+              "fullDescription": {
+                "text": "The container declares components, and this first-level source directory maps to none. Components follow a directory convention, so this is a hypothesis."
+              },
+              "help": {
+                "text": "Decide whether the directory is a component that belongs in the model."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "category": "coverage",
+                "status": "hypothesis"
+              }
+            },
+            {
+              "id": "container-undeclared",
+              "name": "container-undeclared",
+              "shortDescription": {
+                "text": "Deployable unit is not in the declared model"
+              },
+              "fullDescription": {
+                "text": "A compose service, Dockerfile or Kubernetes workload maps to no declared container. Verified when every declared container has commons.source, otherwise a hypothesis."
+              },
+              "help": {
+                "text": "Add it to the model (see the suggested snippet), or list it in ignore_containers."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "category": "coverage",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "element-source-missing",
+              "name": "element-source-missing",
+              "shortDescription": {
+                "text": "Declared element's commons.source matches nothing"
+              },
+              "fullDescription": {
+                "text": "The path does not exist and no compose service, workload or Kubernetes Service has that name."
+              },
+              "help": {
+                "text": "Update the mapping, or remove the element if it no longer exists."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "category": "coverage",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "external-system-undeclared",
+              "name": "external-system-undeclared",
+              "shortDescription": {
+                "text": "Vendor SDK is used but no external system is declared"
+              },
+              "fullDescription": {
+                "text": "A mapped container imports a known third-party SDK, and no declared external system maps to the vendor."
+              },
+              "help": {
+                "text": "Declare the external system (and its data-handling notes)."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "category": "coverage",
+                "status": "hypothesis"
+              }
+            },
+            {
+              "id": "interface-unowned",
+              "name": "interface-unowned",
+              "shortDescription": {
+                "text": "API description is not inside any declared container"
+              },
+              "fullDescription": {
+                "text": "An OpenAPI/AsyncAPI file lies outside the source paths of every mapped container."
+              },
+              "help": {
+                "text": "Attach it to its owning container with commons.source, or move it."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "category": "coverage",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "model-invalid",
+              "name": "model-invalid",
+              "shortDescription": {
+                "text": "Declared model is unusable or contains a construct that is never evaluated"
+              },
+              "fullDescription": {
+                "text": "The model could not be parsed, or uses !script, !plugin, a remote !include or workspace extends. Architecture Check never runs code or fetches content, so drift results may be incomplete."
+              },
+              "help": {
+                "text": "Fix the model, or move the construct out of the file Architecture Check reads."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "category": "integrity",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "model-reference-invalid",
+              "name": "model-reference-invalid",
+              "shortDescription": {
+                "text": "Declared model references an element that is not defined, or defines one twice"
+              },
+              "fullDescription": {
+                "text": "A relationship, allowed dependency or containment names an undefined id, or an id is duplicated."
+              },
+              "help": {
+                "text": "Fix the reference or the duplicate id."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "category": "integrity",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "model-stale-reference",
+              "name": "model-stale-reference",
+              "shortDescription": {
+                "text": "Declared model references a file that does not exist"
+              },
+              "fullDescription": {
+                "text": "An ADR or documentation path in the model points at nothing."
+              },
+              "help": {
+                "text": "Fix or remove the reference."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "category": "integrity",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "relationship-undeclared",
+              "name": "relationship-undeclared",
+              "shortDescription": {
+                "text": "Observed dependency is not declared"
+              },
+              "fullDescription": {
+                "text": "Imports, compose dependencies or host names in configuration connect two mapped elements, and no declared relationship covers them."
+              },
+              "help": {
+                "text": "Declare the relationship, or remove the dependency."
+              },
+              "defaultConfiguration": {
+                "level": "warning"
+              },
+              "properties": {
+                "category": "relationships",
+                "status": "verified_static_fact"
+              }
+            },
+            {
+              "id": "relationship-unobserved",
+              "name": "relationship-unobserved",
+              "shortDescription": {
+                "text": "Declared relationship has no static evidence"
+              },
+              "fullDescription": {
+                "text": "No import, compose dependency or configuration host name was found for it. Runtime calls and deploy-time configuration are invisible to static analysis, so this is unknown, not absent."
+              },
+              "help": {
+                "text": "Confirm the relationship still exists."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "category": "relationships",
+                "status": "unknown"
+              }
+            },
+            {
+              "id": "technology-mismatch",
+              "name": "technology-mismatch",
+              "shortDescription": {
+                "text": "Declared technology differs from the build"
+              },
+              "fullDescription": {
+                "text": "The declared technology names a known family, and the image the container is built from belongs to another. Multi-stage builds and sidecars can explain this."
+              },
+              "help": {
+                "text": "Update the declared technology, or check the build."
+              },
+              "defaultConfiguration": {
+                "level": "note"
+              },
+              "properties": {
+                "category": "technology",
+                "status": "hypothesis"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "boundary-violation",
+          "ruleIndex": 0,
+          "level": "error",
+          "message": {
+            "text": "shop.web depends on shop.shared, which commons.allowed-dependencies of shop.web does not allow. Remove the dependency, or change the declared rule if the dependency is intended."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "web/src/cart/cart.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "architectureCheckFindingId/v1": "ACF-C503CE4046"
+          },
+          "properties": {
+            "status": "verified_static_fact",
+            "confidence": "high",
+            "is_heuristic": false,
+            "subject": "shop.web -> shop.shared",
+            "change_status": null
+          }
+        },
+        {
+          "ruleId": "relationship-undeclared",
+          "ruleIndex": 9,
+          "level": "warning",
+          "message": {
+            "text": "shop.api.orders depends on shop.shared, and no declared relationship covers it. Declare the relationship, or remove the dependency."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "api/src/orders/service.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "architectureCheckFindingId/v1": "ACF-A01D7B0E2F"
+          },
+          "properties": {
+            "status": "verified_static_fact",
+            "confidence": "high",
+            "is_heuristic": false,
+            "subject": "shop.api.orders -> shop.shared",
+            "change_status": null
+          }
+        },
+        {
+          "ruleId": "component-undeclared",
+          "ruleIndex": 1,
+          "level": "note",
+          "message": {
+            "text": "Directory api/src/payments in shop.api is not a declared component. Decide whether the directory is a component that belongs in the model."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "api/src/payments"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "architectureCheckFindingId/v1": "ACF-997B3A959F"
+          },
+          "properties": {
+            "status": "hypothesis",
+            "confidence": "medium",
+            "is_heuristic": true,
+            "subject": "api.payments",
+            "change_status": null
+          }
+        },
+        {
+          "ruleId": "external-system-undeclared",
+          "ruleIndex": 4,
+          "level": "note",
+          "message": {
+            "text": "Stripe SDK (stripe) is imported, and no declared external system maps to it. Declare the external system (and its data-handling notes)."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "api/src/payments/stripe.ts"
+                },
+                "region": {
+                  "startLine": 1,
+                  "endLine": 1
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "architectureCheckFindingId/v1": "ACF-19C1C9160F"
+          },
+          "properties": {
+            "status": "hypothesis",
+            "confidence": "medium",
+            "is_heuristic": true,
+            "subject": "Stripe",
+            "change_status": null
+          }
+        }
+      ],
+      "properties": {
+        "policy": "fail",
+        "limitations": [
+          "static-analysis-only"
+        ]
+      }
+    }
+  ]
+}

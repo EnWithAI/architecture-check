@@ -1,0 +1,79 @@
+{
+  "name": "@enwithai/architecture-check",
+  "version": "0.1.0-alpha.0",
+  "description": "Deterministic, offline drift checks between a C4/CALM architecture model committed in git and the code, deployment files and API descriptions beside it.",
+  "license": "MIT",
+  "author": "EnWithAI Technologies",
+  "homepage": "https://github.com/enwithai/architecture-check#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enwithai/architecture-check.git"
+  },
+  "bugs": {
+    "url": "https://github.com/enwithai/architecture-check/issues"
+  },
+  "type": "module",
+  "bin": {
+    "architecture-check": "dist/cli/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema/architecture-check-report.schema.json": "./schema/architecture-check-report.schema.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/",
+    "schema/",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "NOTICE.md",
+    "ATTRIBUTION.md",
+    "TRADEMARKS.md"
+  ],
+  "engines": {
+    "node": "^22 || ^24 || >=26"
+  },
+  "keywords": [
+    "architecture",
+    "c4",
+    "structurizr",
+    "calm",
+    "architecture-as-code",
+    "drift",
+    "developer-tools"
+  ],
+  "scripts": {
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.build.json && node scripts/postbuild.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "check:all": "npm run typecheck && npm run lint && npm run format:check && npm run build && npm run test:coverage"
+  },
+  "dependencies": {
+    "yaml": "2.9.1"
+  },
+  "devDependencies": {
+    "@enwithai/impact-check": "0.3.0",
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.1",
+    "@vitest/coverage-v8": "5.0.3",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "eslint": "10.12.0",
+    "prettier": "3.9.9",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

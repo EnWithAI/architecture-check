@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "repo_revision": { "ref": "WORKTREE", "commit": null, "kind": "worktree" },
+  "repository": {
+    "name": "shop",
+    "ts_config": null,
+    "workspace_packages": [
+      { "name": "shop", "path": "." },
+      { "name": "@shop/api", "path": "api" },
+      { "name": "@shop/shared", "path": "shared" },
+      { "name": "@shop/web", "path": "web" }
+    ]
+  },
+  "modules": [
+    { "path": "api/src/index.ts", "language": "typescript", "kind": "source", "package": "@shop/api" },
+    { "path": "api/src/orders/service.ts", "language": "typescript", "kind": "source", "package": "@shop/api" },
+    { "path": "api/src/payments/stripe.ts", "language": "typescript", "kind": "source", "package": "@shop/api" },
+    { "path": "shared/src/money.ts", "language": "typescript", "kind": "source", "package": "@shop/shared" },
+    { "path": "web/src/app.test.ts", "language": "typescript", "kind": "test", "package": "@shop/web" },
+    { "path": "web/src/app.ts", "language": "typescript", "kind": "source", "package": "@shop/web" },
+    { "path": "web/src/cart/cart.ts", "language": "typescript", "kind": "source", "package": "@shop/web" }
+  ],
+  "edges": [
+    {
+      "from": "api/src/index.ts",
+      "to": "api/src/orders/service.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "./orders/service.js", "line": 1 }]
+    },
+    {
+      "from": "api/src/index.ts",
+      "to": "api/src/payments/stripe.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "./payments/stripe.js", "line": 2 }]
+    },
+    {
+      "from": "api/src/orders/service.ts",
+      "to": "api/src/payments/stripe.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "../payments/stripe.js", "line": 2 }]
+    },
+    {
+      "from": "api/src/orders/service.ts",
+      "to": "shared/src/money.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "../../../shared/src/money.js", "line": 1 }]
+    },
+    {
+      "from": "web/src/app.test.ts",
+      "to": "shared/src/money.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "../../shared/src/money.js", "line": 1 }]
+    },
+    {
+      "from": "web/src/app.test.ts",
+      "to": "web/src/app.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "./app.js", "line": 2 }]
+    },
+    {
+      "from": "web/src/app.ts",
+      "to": "api/src/index.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "../../api/src/index.js", "line": 1 }]
+    },
+    {
+      "from": "web/src/app.ts",
+      "to": "shared/src/money.ts",
+      "provenance": "graph",
+      "type_only": true,
+      "imports": [{ "specifier": "../../shared/src/money.js", "line": 3 }]
+    },
+    {
+      "from": "web/src/app.ts",
+      "to": "web/src/cart/cart.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "./cart/cart.js", "line": 2 }]
+    },
+    {
+      "from": "web/src/cart/cart.ts",
+      "to": "shared/src/money.ts",
+      "provenance": "graph",
+      "type_only": false,
+      "imports": [{ "specifier": "../../../shared/src/money.js", "line": 1 }]
+    }
+  ],
+  "unresolved_imports": [],
+  "external_imports": [
+    { "from": "api/src/payments/stripe.ts", "specifier": "stripe", "line": 1 },
+    { "from": "web/src/app.ts", "specifier": "react", "line": 4 }
+  ],
+  "stats": { "modules": 7, "edges": 10, "unresolved_local": 0 },
+  "coverage_limitations": []
+}

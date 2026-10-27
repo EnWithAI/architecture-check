@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "relationship-unobserved", "status": "unknown", "severity": "info", "subject": "shop.api -> payments",
+      "evidence": [["architecture/workspace.dsl", 33]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

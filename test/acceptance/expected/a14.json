@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "relationship-undeclared", "status": "hypothesis", "severity": "medium", "subject": "orders.api -> orders.database",
+      "evidence": [["deploy/api.yaml", 18]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

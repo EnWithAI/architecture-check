@@ -1,0 +1,98 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 EnWithAI Technologies
+# Architecture Check composite GitHub Action. Compares the architecture model committed in the repository with the
+# as-built model and writes JSON/Markdown/SARIF reports and a job summary. Security model below and in docs/ACTION.md.
+
+name: "Architecture Check report"
+description: "Offline drift checks between your C4/CALM architecture model and the code, deployment files and API descriptions beside it. Never executes anything."
+author: "EnWithAI Technologies"
+branding:
+  icon: "layers"
+  color: "blue"
+
+# Security model (see docs/ACTION.md):
+# - Use on `pull_request` with `permissions: contents: read`. Do not use `pull_request_target`.
+# - The one runtime dependency (yaml) is installed from the pinned lockfile with `npm ci --omit=dev --ignore-scripts`
+#   (this step contacts the npm registry); the check itself makes no network access.
+# - Inputs are passed through environment variables, never interpolated into shell code.
+# - A pull request can edit its own model and .architecture-check.json; protect them (and .github/) with CODEOWNERS
+#   when the check is blocking.
+inputs:
+  working-directory:
+    description: "Repository root (relative to the workspace) that the model and all paths are resolved against."
+    required: false
+    default: "."
+  model:
+    description: "Declared model (relative to working-directory). Default: architecture/workspace.dsl, architecture/calm.json, … (first that exists)."
+    required: false
+    default: ""
+  graph:
+    description: "Module graph from `impact-check graph --format json` (relative to working-directory). Optional."
+    required: false
+    default: ""
+  impact-check:
+    description: "Impact Check JSON report (relative to working-directory). Optional: marks findings introduced/pre-existing."
+    required: false
+    default: ""
+  config-path:
+    description: "Config path relative to working-directory."
+    required: false
+    default: ".architecture-check.json"
+  output-dir:
+    description: "Directory (relative to the workspace) for architecture-check-report.{json,md,sarif}."
+    required: false
+    default: "architecture-check-report"
+  fail-on-policy:
+    description: "Fail the step when the policy fails (default false: report only)."
+    required: false
+    default: "false"
+  on-error:
+    description: "Tool errors (not policy failures): auto (default; fail when fail-on-policy is true, otherwise warn), fail or warn."
+    required: false
+    default: "auto"
+outputs:
+  report-json:
+    description: "Path of the JSON report (relative to the workspace)."
+    value: ${{ steps.architecture-check.outputs.report-json }}
+  report-markdown:
+    description: "Path of the Markdown report."
+    value: ${{ steps.architecture-check.outputs.report-markdown }}
+  report-sarif:
+    description: "Path of the SARIF report (upload it with github/codeql-action/upload-sarif if you want code-scanning alerts)."
+    value: ${{ steps.architecture-check.outputs.report-sarif }}
+  findings:
+    description: "Number of findings."
+    value: ${{ steps.architecture-check.outputs.findings }}
+  high-findings:
+    description: "Number of high-severity findings."
+    value: ${{ steps.architecture-check.outputs.high-findings }}
+  policy:
+    description: "passed or failed."
+    value: ${{ steps.architecture-check.outputs.policy }}
+  status:
+    description: "ok, or error when on-error let a tool error pass (fail-open)."
+    value: ${{ steps.architecture-check.outputs.status }}
+runs:
+  using: "composite"
+  steps:
+    - name: Install Architecture Check runtime dependencies (pinned lockfile, no install scripts)
+      shell: bash
+      run: |
+        cd "$GITHUB_ACTION_PATH"
+        if [ ! -d node_modules/yaml ]; then
+          npm ci --omit=dev --ignore-scripts --no-audit --no-fund
+        fi
+        test -f dist/action/main.js || { echo "::error::dist/ is missing in this Architecture Check ref; use a release tag"; exit 1; }
+    - name: Run Architecture Check
+      id: architecture-check
+      shell: bash
+      env:
+        INPUT_WORKING_DIRECTORY: ${{ inputs.working-directory }}
+        INPUT_MODEL: ${{ inputs.model }}
+        INPUT_GRAPH: ${{ inputs.graph }}
+        INPUT_IMPACT_CHECK: ${{ inputs.impact-check }}
+        INPUT_CONFIG_PATH: ${{ inputs.config-path }}
+        INPUT_OUTPUT_DIR: ${{ inputs.output-dir }}
+        INPUT_FAIL_ON_POLICY: ${{ inputs.fail-on-policy }}
+        INPUT_ON_ERROR: ${{ inputs.on-error }}
+      run: node "$GITHUB_ACTION_PATH/dist/action/main.js"

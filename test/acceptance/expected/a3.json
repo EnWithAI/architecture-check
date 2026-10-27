@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "element-source-missing", "status": "verified_static_fact", "severity": "medium", "subject": "shop.billing",
+      "evidence": [["architecture/workspace.dsl", 22]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

@@ -1,0 +1,1 @@
+{ "findings": [], "limitations": ["helm-not-rendered", "iac-not-evaluated", "no-module-graph", "static-analysis-only"] }

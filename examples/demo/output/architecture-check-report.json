@@ -1,0 +1,642 @@
+{
+  "schema_version": "1.0",
+  "kind": "architecture-check-report",
+  "tool": {
+    "name": "architecture-check",
+    "version": "0.1.0-alpha.0"
+  },
+  "command": "check",
+  "declared_model": {
+    "path": "architecture/workspace.dsl",
+    "format": "dsl",
+    "schema": null,
+    "sha256": "a4a047b692dd670d113e139b3433a228cd48e6cdd2f3ccd6030abbb32e2c9c17",
+    "usable": true,
+    "elements": 7,
+    "relationships": 3
+  },
+  "inputs": {
+    "graph": {
+      "path": "graph.json",
+      "schema_version": "1.0",
+      "sha256": "514a0d317b2e6c199c61ba574cf7bd0dae0914b952c7da2886abbd55729ad3ff"
+    },
+    "impact_check": null
+  },
+  "as_built": {
+    "system_name": "As-built system",
+    "elements": [
+      {
+        "id": "api",
+        "kind": "container",
+        "name": "api",
+        "aliases": [
+          "@shop/api"
+        ],
+        "parent": null,
+        "node_type": "service",
+        "origins": [
+          "compose"
+        ],
+        "source_paths": [
+          "api"
+        ],
+        "packages": [],
+        "technology": "Node.js",
+        "descriptors": [
+          "api/Dockerfile",
+          "docker-compose.yml"
+        ],
+        "evidence": [
+          {
+            "kind": "dockerfile",
+            "path": "api/Dockerfile",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "observed",
+            "detail": "FROM node:22-alpine"
+          },
+          {
+            "kind": "compose-service",
+            "path": "docker-compose.yml",
+            "line_start": 6,
+            "line_end": 6,
+            "provenance": "observed",
+            "detail": "compose service api"
+          }
+        ]
+      },
+      {
+        "id": "api.orders",
+        "kind": "component",
+        "name": "orders",
+        "aliases": [],
+        "parent": "api",
+        "node_type": "component",
+        "origins": [
+          "graph"
+        ],
+        "source_paths": [
+          "api/src/orders"
+        ],
+        "packages": [],
+        "technology": null,
+        "descriptors": [],
+        "evidence": [
+          {
+            "kind": "component-directory",
+            "path": "api/src/orders",
+            "line_start": null,
+            "line_end": null,
+            "provenance": "graph",
+            "detail": "directory with source modules"
+          }
+        ]
+      },
+      {
+        "id": "api.payments",
+        "kind": "component",
+        "name": "payments",
+        "aliases": [],
+        "parent": "api",
+        "node_type": "component",
+        "origins": [
+          "graph"
+        ],
+        "source_paths": [
+          "api/src/payments"
+        ],
+        "packages": [],
+        "technology": null,
+        "descriptors": [],
+        "evidence": [
+          {
+            "kind": "component-directory",
+            "path": "api/src/payments",
+            "line_start": null,
+            "line_end": null,
+            "provenance": "graph",
+            "detail": "directory with source modules"
+          }
+        ]
+      },
+      {
+        "id": "db",
+        "kind": "container",
+        "name": "db",
+        "aliases": [],
+        "parent": null,
+        "node_type": "database",
+        "origins": [
+          "compose"
+        ],
+        "source_paths": [],
+        "packages": [],
+        "technology": "PostgreSQL",
+        "descriptors": [
+          "docker-compose.yml"
+        ],
+        "evidence": [
+          {
+            "kind": "compose-service",
+            "path": "docker-compose.yml",
+            "line_start": 12,
+            "line_end": 12,
+            "provenance": "observed",
+            "detail": "compose service db"
+          }
+        ]
+      },
+      {
+        "id": "shared",
+        "kind": "container",
+        "name": "shared",
+        "aliases": [
+          "@shop/shared"
+        ],
+        "parent": null,
+        "node_type": "service",
+        "origins": [
+          "declared-source"
+        ],
+        "source_paths": [
+          "shared"
+        ],
+        "packages": [],
+        "technology": null,
+        "descriptors": [],
+        "evidence": []
+      },
+      {
+        "id": "stripe",
+        "kind": "external_system",
+        "name": "Stripe",
+        "aliases": [],
+        "parent": null,
+        "node_type": "ecosystem",
+        "origins": [
+          "vendor-sdk"
+        ],
+        "source_paths": [],
+        "packages": [
+          "stripe"
+        ],
+        "technology": null,
+        "descriptors": [],
+        "evidence": [
+          {
+            "kind": "external-import",
+            "path": "api/src/payments/stripe.ts",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "graph",
+            "detail": "imports stripe"
+          }
+        ]
+      },
+      {
+        "id": "web",
+        "kind": "container",
+        "name": "web",
+        "aliases": [
+          "@shop/web"
+        ],
+        "parent": null,
+        "node_type": "service",
+        "origins": [
+          "compose"
+        ],
+        "source_paths": [
+          "web"
+        ],
+        "packages": [],
+        "technology": "Node.js",
+        "descriptors": [
+          "docker-compose.yml",
+          "web/Dockerfile"
+        ],
+        "evidence": [
+          {
+            "kind": "compose-service",
+            "path": "docker-compose.yml",
+            "line_start": 2,
+            "line_end": 2,
+            "provenance": "observed",
+            "detail": "compose service web"
+          },
+          {
+            "kind": "dockerfile",
+            "path": "web/Dockerfile",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "observed",
+            "detail": "FROM node:22-alpine"
+          }
+        ]
+      },
+      {
+        "id": "web.cart",
+        "kind": "component",
+        "name": "cart",
+        "aliases": [],
+        "parent": "web",
+        "node_type": "component",
+        "origins": [
+          "graph"
+        ],
+        "source_paths": [
+          "web/src/cart"
+        ],
+        "packages": [],
+        "technology": null,
+        "descriptors": [],
+        "evidence": [
+          {
+            "kind": "component-directory",
+            "path": "web/src/cart",
+            "line_start": null,
+            "line_end": null,
+            "provenance": "graph",
+            "detail": "directory with source modules"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from": "api",
+        "to": "db",
+        "labels": [
+          "depends_on",
+          "env DATABASE_URL"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "compose-dependency",
+            "path": "docker-compose.yml",
+            "line_start": 9,
+            "line_end": 9,
+            "provenance": "observed",
+            "detail": "depends_on db"
+          },
+          {
+            "kind": "compose-environment",
+            "path": "docker-compose.yml",
+            "line_start": 11,
+            "line_end": 11,
+            "provenance": "inferred",
+            "detail": "DATABASE_URL names host db"
+          }
+        ],
+        "evidence_total": 2
+      },
+      {
+        "from": "api.orders",
+        "to": "api.payments",
+        "labels": [
+          "imports"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "import",
+            "path": "api/src/orders/service.ts",
+            "line_start": 2,
+            "line_end": 2,
+            "provenance": "graph",
+            "detail": "imports api/src/payments/stripe.ts"
+          }
+        ],
+        "evidence_total": 1
+      },
+      {
+        "from": "api.orders",
+        "to": "shared",
+        "labels": [
+          "imports"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "import",
+            "path": "api/src/orders/service.ts",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "graph",
+            "detail": "imports shared/src/money.ts"
+          }
+        ],
+        "evidence_total": 1
+      },
+      {
+        "from": "api.payments",
+        "to": "stripe",
+        "labels": [
+          "imports"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "external-import",
+            "path": "api/src/payments/stripe.ts",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "graph",
+            "detail": "imports stripe"
+          }
+        ],
+        "evidence_total": 1
+      },
+      {
+        "from": "web",
+        "to": "api",
+        "labels": [
+          "depends_on",
+          "imports"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "compose-dependency",
+            "path": "docker-compose.yml",
+            "line_start": 5,
+            "line_end": 5,
+            "provenance": "observed",
+            "detail": "depends_on api"
+          },
+          {
+            "kind": "import",
+            "path": "web/src/app.ts",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "graph",
+            "detail": "imports api/src/index.ts"
+          }
+        ],
+        "evidence_total": 2
+      },
+      {
+        "from": "web.cart",
+        "to": "shared",
+        "labels": [
+          "imports"
+        ],
+        "status": "verified_static_fact",
+        "evidence": [
+          {
+            "kind": "import",
+            "path": "web/src/cart/cart.ts",
+            "line_start": 1,
+            "line_end": 1,
+            "provenance": "graph",
+            "detail": "imports shared/src/money.ts"
+          }
+        ],
+        "evidence_total": 1
+      }
+    ],
+    "interfaces": []
+  },
+  "mapping": [
+    {
+      "declared_id": "customer",
+      "kind": "person",
+      "as_built_ids": [],
+      "match": "not-applicable",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop",
+      "kind": "software_system",
+      "as_built_ids": [],
+      "match": "not-applicable",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop.api",
+      "kind": "container",
+      "as_built_ids": [
+        "api"
+      ],
+      "match": "source",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop.api.orders",
+      "kind": "component",
+      "as_built_ids": [
+        "api.orders"
+      ],
+      "match": "source",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop.db",
+      "kind": "container",
+      "as_built_ids": [
+        "db"
+      ],
+      "match": "source",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop.shared",
+      "kind": "container",
+      "as_built_ids": [
+        "shared"
+      ],
+      "match": "source",
+      "ignored": false
+    },
+    {
+      "declared_id": "shop.web",
+      "kind": "container",
+      "as_built_ids": [
+        "web"
+      ],
+      "match": "source",
+      "ignored": false
+    }
+  ],
+  "complete_mapping": true,
+  "findings": [
+    {
+      "id": "ACF-C503CE4046",
+      "rule_id": "boundary-violation",
+      "category": "relationships",
+      "severity": "high",
+      "status": "verified_static_fact",
+      "confidence": "high",
+      "is_heuristic": false,
+      "subject": "shop.web -> shop.shared",
+      "summary": "shop.web depends on shop.shared, which commons.allowed-dependencies of shop.web does not allow",
+      "declared_elements": [
+        "shop.shared",
+        "shop.web"
+      ],
+      "as_built_elements": [
+        "shared",
+        "web.cart"
+      ],
+      "evidence": [
+        {
+          "kind": "import",
+          "path": "web/src/cart/cart.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "provenance": "graph",
+          "detail": "imports shared/src/money.ts"
+        }
+      ],
+      "evidence_total": 1,
+      "recommended_human_action": "Remove the dependency, or change the declared rule if the dependency is intended.",
+      "suggested_model_change": null,
+      "change_status": null
+    },
+    {
+      "id": "ACF-A01D7B0E2F",
+      "rule_id": "relationship-undeclared",
+      "category": "relationships",
+      "severity": "medium",
+      "status": "verified_static_fact",
+      "confidence": "high",
+      "is_heuristic": false,
+      "subject": "shop.api.orders -> shop.shared",
+      "summary": "shop.api.orders depends on shop.shared, and no declared relationship covers it",
+      "declared_elements": [
+        "shop.api.orders",
+        "shop.shared"
+      ],
+      "as_built_elements": [
+        "api.orders",
+        "shared"
+      ],
+      "evidence": [
+        {
+          "kind": "import",
+          "path": "api/src/orders/service.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "provenance": "graph",
+          "detail": "imports shared/src/money.ts"
+        }
+      ],
+      "evidence_total": 1,
+      "recommended_human_action": "Declare the relationship, or remove the dependency.",
+      "suggested_model_change": null,
+      "change_status": null
+    },
+    {
+      "id": "ACF-997B3A959F",
+      "rule_id": "component-undeclared",
+      "category": "coverage",
+      "severity": "low",
+      "status": "hypothesis",
+      "confidence": "medium",
+      "is_heuristic": true,
+      "subject": "api.payments",
+      "summary": "Directory api/src/payments in shop.api is not a declared component",
+      "declared_elements": [
+        "shop.api"
+      ],
+      "as_built_elements": [
+        "api.payments"
+      ],
+      "evidence": [
+        {
+          "kind": "component-directory",
+          "path": "api/src/payments",
+          "line_start": null,
+          "line_end": null,
+          "provenance": "graph",
+          "detail": "directory with source modules"
+        }
+      ],
+      "evidence_total": 1,
+      "recommended_human_action": "Decide whether the directory is a component that belongs in the model.",
+      "suggested_model_change": "payments = component \"payments\" \"\" \"\" {\n    properties {\n        \"commons.source\" \"api/src/payments\"\n    }\n}",
+      "change_status": null
+    },
+    {
+      "id": "ACF-19C1C9160F",
+      "rule_id": "external-system-undeclared",
+      "category": "coverage",
+      "severity": "low",
+      "status": "hypothesis",
+      "confidence": "medium",
+      "is_heuristic": true,
+      "subject": "Stripe",
+      "summary": "Stripe SDK (stripe) is imported, and no declared external system maps to it",
+      "declared_elements": [
+        "shop.api"
+      ],
+      "as_built_elements": [
+        "stripe"
+      ],
+      "evidence": [
+        {
+          "kind": "external-import",
+          "path": "api/src/payments/stripe.ts",
+          "line_start": 1,
+          "line_end": 1,
+          "provenance": "graph",
+          "detail": "imports stripe"
+        }
+      ],
+      "evidence_total": 1,
+      "recommended_human_action": "Declare the external system (and its data-handling notes).",
+      "suggested_model_change": null,
+      "change_status": null
+    }
+  ],
+  "summary": {
+    "findings": 4,
+    "by_status": {
+      "verified_static_fact": 2,
+      "hypothesis": 2,
+      "unknown": 0
+    },
+    "by_severity": {
+      "high": 1,
+      "medium": 1,
+      "low": 2,
+      "info": 0
+    },
+    "by_rule": {
+      "boundary-violation": 1,
+      "component-undeclared": 1,
+      "external-system-undeclared": 1,
+      "relationship-undeclared": 1
+    },
+    "as_built_elements": 8,
+    "as_built_relationships": 6,
+    "interfaces": 0
+  },
+  "policy": {
+    "evaluated": true,
+    "result": "fail",
+    "fail_on_severity": "high",
+    "fail_on_statuses": [
+      "verified_static_fact"
+    ],
+    "violations": [
+      "ACF-C503CE4046"
+    ]
+  },
+  "ignored_containers": [],
+  "coverage_limitations": [
+    {
+      "code": "static-analysis-only",
+      "message": "Only static evidence is used: runtime calls, service discovery and deploy-time configuration are invisible. Missing evidence is reported as unknown, never as absence.",
+      "count": 1,
+      "paths": []
+    }
+  ],
+  "run_metadata": {
+    "generated_at": "2026-01-01T00:00:00.000Z",
+    "tool_version": "0.1.0-alpha.0",
+    "node_version": "normalized",
+    "duration_ms": 0
+  }
+}

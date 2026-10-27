@@ -1,0 +1,13 @@
+{
+  "findings": [
+    { "rule_id": "boundary-violation", "status": "hypothesis", "severity": "medium", "subject": "shop.web -> shop.shared",
+      "evidence": [["web/src/cart/cart.ts", 1]] },
+    { "rule_id": "relationship-undeclared", "status": "hypothesis", "severity": "medium", "subject": "shop.api.orders -> shop.shared",
+      "evidence": [["api/src/orders/service.ts", 1]] },
+    { "rule_id": "component-undeclared", "status": "hypothesis", "severity": "low", "subject": "api.payments",
+      "evidence": [["api/src/payments", null]] },
+    { "rule_id": "external-system-undeclared", "status": "hypothesis", "severity": "low", "subject": "Stripe",
+      "evidence": [["api/src/payments/stripe.ts", 1]] }
+  ],
+  "limitations": ["static-analysis-only"]
+}

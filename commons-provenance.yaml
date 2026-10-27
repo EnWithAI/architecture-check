@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: MIT
+# Machine-readable Commons provenance. Standard: EnWithAI Engineering Commons attribution standard v1.0.
+schema_version: "0.1"
+commons:
+  program: engineering-commons
+  publisher: "EnWithAI Technologies"
+  project: architecture-check
+  former_names: []
+license:
+  spdx: MIT
+  file: LICENSE
+  copyright_holder: "EnWithAI Technologies"
+  copyright_holder_confirmed: true # same basis as the other Commons tools (D-087)
+maintainers:
+  - { name: Koushik Ramani, github: aiwithrk, role: maintainer and security contact }
+contact: hello@enwithai.com
+attribution:
+  file: ATTRIBUTION.md
+  notice: NOTICE.md
+  trademarks: TRADEMARKS.md
+  references: REFERENCES.md
+development:
+  vendored_third_party_code: false # test-only CALM schemas (Apache-2.0) are data, not shipped; see NOTICE.md
+  ai_assisted: true
+  synthetic_fixtures_only: true
+ecosystem:
+  related_product: CrewPE
+  dependency: none
+  integration: none
+frameworks:
+  clear:
+    owner: NetworkGain Consulting
+    relationship: none
+    spec_version: null
+    evidence: "The drift rules and tri-state status are Architecture Check's own design, not a CLEAR method."
+  trace:
+    owner: EnWithAI Technologies
+    relationship: not-assessed
+    spec_version: null
+    evidence: "TRACE specification not available."
+upstream:
+  - { name: yaml, version: "2.9.1", license: ISC, use: runtime dependency }
+  - { name: FINOS CALM meta schemas, version: "1.3", license: Apache-2.0, use: test-only validation }
+references: REFERENCES.md
+review_items: [HR-5, HR-11]

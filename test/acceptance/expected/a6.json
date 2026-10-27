@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "interface-unowned", "status": "verified_static_fact", "severity": "medium", "subject": "contracts/orders.yaml",
+      "evidence": [["contracts/orders.yaml", 1]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

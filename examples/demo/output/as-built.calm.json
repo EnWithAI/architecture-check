@@ -1,0 +1,212 @@
+{
+  "$schema": "https://calm.finos.org/release/1.3/meta/calm.json",
+  "metadata": {
+    "commons.generated-by": "architecture-check"
+  },
+  "nodes": [
+    {
+      "unique-id": "api",
+      "node-type": "service",
+      "name": "api",
+      "description": "api/Dockerfile, docker-compose.yml",
+      "metadata": {
+        "technology": "Node.js",
+        "commons.source": "api"
+      }
+    },
+    {
+      "unique-id": "api.orders",
+      "node-type": "component",
+      "name": "orders",
+      "description": "",
+      "metadata": {
+        "commons.source": "api/src/orders"
+      }
+    },
+    {
+      "unique-id": "api.payments",
+      "node-type": "component",
+      "name": "payments",
+      "description": "",
+      "metadata": {
+        "commons.source": "api/src/payments"
+      }
+    },
+    {
+      "unique-id": "db",
+      "node-type": "database",
+      "name": "db",
+      "description": "docker-compose.yml",
+      "metadata": {
+        "technology": "PostgreSQL",
+        "commons.source": "db"
+      }
+    },
+    {
+      "unique-id": "shop_shared",
+      "node-type": "service",
+      "name": "@shop/shared",
+      "description": "Workspace package",
+      "metadata": {
+        "commons.source": "shared"
+      }
+    },
+    {
+      "unique-id": "stripe",
+      "node-type": "ecosystem",
+      "name": "Stripe",
+      "description": "npm: stripe",
+      "metadata": {
+        "commons.source": "stripe"
+      }
+    },
+    {
+      "unique-id": "system",
+      "node-type": "system",
+      "name": "As-built system",
+      "description": "Derived by Architecture Check from static evidence. Review before adopting it as the declared model."
+    },
+    {
+      "unique-id": "web",
+      "node-type": "service",
+      "name": "web",
+      "description": "docker-compose.yml, web/Dockerfile",
+      "metadata": {
+        "technology": "Node.js",
+        "commons.source": "web"
+      }
+    },
+    {
+      "unique-id": "web.cart",
+      "node-type": "component",
+      "name": "cart",
+      "description": "",
+      "metadata": {
+        "commons.source": "web/src/cart"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "api-composed-of",
+      "relationship-type": {
+        "composed-of": {
+          "container": "api",
+          "nodes": [
+            "api.orders",
+            "api.payments"
+          ]
+        }
+      }
+    },
+    {
+      "unique-id": "system-composed-of",
+      "relationship-type": {
+        "composed-of": {
+          "container": "system",
+          "nodes": [
+            "api",
+            "db",
+            "shop_shared",
+            "web"
+          ]
+        }
+      }
+    },
+    {
+      "unique-id": "web-composed-of",
+      "relationship-type": {
+        "composed-of": {
+          "container": "web",
+          "nodes": [
+            "web.cart"
+          ]
+        }
+      }
+    },
+    {
+      "unique-id": "api-connects-db",
+      "description": "depends_on, env DATABASE_URL",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api"
+          },
+          "destination": {
+            "node": "db"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "api.orders-connects-api.payments",
+      "description": "imports",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api.orders"
+          },
+          "destination": {
+            "node": "api.payments"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "api.orders-connects-shop_shared",
+      "description": "imports",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api.orders"
+          },
+          "destination": {
+            "node": "shop_shared"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "api.payments-connects-stripe",
+      "description": "imports",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "api.payments"
+          },
+          "destination": {
+            "node": "stripe"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "web-connects-api",
+      "description": "depends_on, imports",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "web"
+          },
+          "destination": {
+            "node": "api"
+          }
+        }
+      }
+    },
+    {
+      "unique-id": "web.cart-connects-shop_shared",
+      "description": "imports",
+      "relationship-type": {
+        "connects": {
+          "source": {
+            "node": "web.cart"
+          },
+          "destination": {
+            "node": "shop_shared"
+          }
+        }
+      }
+    }
+  ]
+}
