@@ -5,9 +5,10 @@ minor versions may break the report schema, which carries its own `schema_versio
 
 ## Unreleased
 
-## 0.1.0-alpha.0 — not released
+## 0.1.0 — 2026-10-27
 
-First alpha (local only; nothing published).
+First release (developed as 0.1.0-alpha.0; released directly as 0.1.0 so that plain `npm install` and `npx`
+resolve it).
 
 - `derive`: as-built model from compose services, Dockerfiles, plain Kubernetes workloads and Services, workspace
   packages and the Impact Check module graph (`impact-check graph`, graph schema 1.0); written as Structurizr DSL or

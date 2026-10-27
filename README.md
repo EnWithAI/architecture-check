@@ -24,7 +24,8 @@ runtime calls are invisible to static analysis. There is no architecture score.
 `derive` writes the as-built model as Structurizr DSL or CALM 1.3 JSON, so you can start a model from the code, render
 it in Structurizr, or compare it with `calm diff`.
 
-> Status: **alpha** (`0.1.0-alpha.0`, report schema 1.0). **Not published**; build from source.
+> Status: **early release** (`0.1.0`, pre-1.0, report schema 1.0). Published on npm as
+> [`@enwithai/architecture-check`](https://www.npmjs.com/package/@enwithai/architecture-check); see [Install](#install).
 
 ## 60-second demo
 
@@ -52,6 +53,19 @@ byte for byte (also [JSON](examples/demo/output/architecture-check-report.json) 
 
 The as-built model of the same repository: [`as-built.dsl`](examples/demo/output/as-built.dsl),
 [`as-built.calm.json`](examples/demo/output/as-built.calm.json).
+
+## Install
+
+```bash
+npm install --global @enwithai/architecture-check
+architecture-check --help
+```
+
+To build from source instead:
+`git clone https://github.com/enwithai/architecture-check.git && cd architecture-check && npm ci --ignore-scripts && npm run build`.
+
+Uninstall with `npm uninstall --global @enwithai/architecture-check`. Architecture Check writes nothing outside the
+output you ask for. No account, token, telemetry or network access. One runtime dependency (`yaml`).
 
 ## Usage
 
