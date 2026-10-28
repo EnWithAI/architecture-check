@@ -116,7 +116,8 @@ export const RULES: Readonly<Record<string, Rule>> = Object.fromEntries([
     status: "verified_static_fact",
     severity: "medium",
     title: "API description is not inside any declared container",
-    explanation: "An OpenAPI/AsyncAPI file lies outside the source paths of every mapped container.",
+    explanation:
+      "An OpenAPI/AsyncAPI file lies outside the source paths of every mapped container. Verified when every declared container has commons.source and at least one container is declared, otherwise a hypothesis.",
     action: "Attach it to its owning container with commons.source, or move it.",
   }),
   rule({

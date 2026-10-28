@@ -107,6 +107,9 @@ api = container "Orders API" "" "Node.js" {
 }
 ```
 
+`"commons.source" "."` is the repository root. A single-package repository (one root `package.json`, no compose,
+Dockerfile, Kubernetes or workspaces) is derived as one container with source `.`.
+
 In CALM, put the same keys in a node's `metadata`. Without `commons.source`, elements are matched by name and the
 findings that rest on those matches are hypotheses. `commons.ignore` excludes an element.
 
@@ -127,7 +130,8 @@ findings that rest on those matches are hypotheses. `commons.ignore` excludes an
 | `technology-mismatch`        | hypothesis  | low                                |
 | `external-system-undeclared` | hypothesis  | low                                |
 
-¹ hypothesis unless every declared container has `commons.source`. ² hypothesis unless the evidence is an import or
+¹ hypothesis unless every declared container has `commons.source` (for `interface-unowned`, also when the model
+declares no container). ² hypothesis unless the evidence is an import or
 compose dependency and both ends are mapped by `commons.source`. Details: [docs/SPEC.md](docs/SPEC.md).
 
 ## What it will not do

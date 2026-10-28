@@ -44,14 +44,17 @@ export interface CompareResult {
   findings: Finding[];
 }
 
-/** Declared container source values that are existing directories (become `declared-source` containers). */
+/**
+ * Declared container source values that are existing directories (become `declared-source` containers; `.` is the
+ * repository root, D-100).
+ */
 export function declaredSourceDirectories(root: string, model: DeclaredModel): string[] {
   const out: string[] = [];
   for (const el of model.elements) {
     if (el.kind !== "container") continue;
     for (const value of el.sources) {
       const path = normalizeRelative(value);
-      if (path !== null && path !== "." && isDirectory(root, path)) out.push(path);
+      if (path !== null && isDirectory(root, path)) out.push(path);
     }
   }
   return out;
@@ -461,7 +464,8 @@ export function compare(input: CompareInput): CompareResult {
     );
   }
 
-  // interface-unowned.
+  // interface-unowned: a hypothesis when no container is declared, since ownership cannot be judged (D-101).
+  const interfaceStatus: Status = scopeContainers.length === 0 ? "hypothesis" : coverageStatus;
   const mappedContainers = containers.filter(
     (c) => asBuiltToDeclared.has(c.id) && !ignored(asBuiltToDeclared.get(c.id) as string)
   );
@@ -469,7 +473,7 @@ export function compare(input: CompareInput): CompareResult {
     if (mappedContainers.some((c) => c.source_paths.some((s) => contains(s, iface.path)))) continue;
     findings.push(
       makeFinding("interface-unowned", iface.path, {
-        status: coverageStatus,
+        status: interfaceStatus,
         summary: `${iface.format === "asyncapi" ? "AsyncAPI" : "OpenAPI"} ${iface.version} description ${iface.path} is outside every declared container`,
         evidence: [
           {

@@ -31,7 +31,8 @@ export type EvidenceKind =
   | "import"
   | "external-import"
   | "component-directory"
-  | "interface-file";
+  | "interface-file"
+  | "package-manifest";
 
 /** One piece of evidence: a file location (line may be null for directories). */
 export interface Evidence {

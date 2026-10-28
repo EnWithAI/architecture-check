@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "component-undeclared", "status": "hypothesis", "severity": "low", "subject": "acme_ledger.cli",
+      "evidence": [["src/cli", null]] }
+  ],
+  "limitations": ["static-analysis-only"]
+}

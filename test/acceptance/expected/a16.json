@@ -1,0 +1,7 @@
+{
+  "findings": [
+    { "rule_id": "interface-unowned", "status": "hypothesis", "severity": "medium", "subject": "api/openapi.yaml",
+      "evidence": [["api/openapi.yaml", 1]] }
+  ],
+  "limitations": ["no-module-graph", "static-analysis-only"]
+}

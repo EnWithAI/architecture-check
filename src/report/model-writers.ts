@@ -29,6 +29,7 @@ export function elementDescription(el: AsBuiltElement): string {
   if (el.kind === "component") return "";
   if (el.descriptors.length > 0) return el.descriptors.join(", ");
   if (el.origins.includes("workspace-package")) return "Workspace package";
+  if (el.origins.includes("root-package")) return "Root package";
   return "Declared source";
 }
 

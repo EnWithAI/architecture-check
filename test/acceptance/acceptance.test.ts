@@ -106,6 +106,38 @@ describe("acceptance scenarios", () => {
     expect((await cli(["check", "--quiet", ...args], dir)).code).toBe(0);
   });
 
+  it("A15: a single-package repository is one container; commons.source . maps to it", async () => {
+    const dir = fixture("a15");
+    const report = await reportOf(dir, graph(dir));
+    expect(brief(report)).toEqual(load("a15.json"));
+    expect(report.complete_mapping).toBe(true);
+    expect(report.mapping.find((m) => m.declared_id === "ledger.app")).toMatchObject({
+      as_built_ids: ["acme_ledger"],
+      match: "source",
+    });
+    const container = report.as_built.elements.find((e) => e.id === "acme_ledger");
+    expect(container?.origins).toEqual(["declared-source", "root-package"]);
+    expect(container?.evidence.map((e) => [e.kind, e.path, e.line_start])).toEqual([
+      ["package-manifest", "package.json", 2],
+    ]);
+  });
+
+  it("A15: derive writes the root package as a container, with or without the graph", async () => {
+    const dir = fixture("a15");
+    const dsl = await cli(["derive", "--quiet", ...graph(dir)], dir);
+    expect(dsl.code).toBe(0);
+    expect(dsl.stdout).toBe(readFileSync(expected("a15.dsl"), "utf8"));
+    const plain = await reportOf(dir, [], "derive");
+    expect(plain.as_built.elements.map((e) => [e.id, e.origins, e.source_paths])).toEqual([
+      ["acme_ledger", ["root-package"], ["."]],
+    ]);
+  });
+
+  it("A16: interface-unowned is a hypothesis when the model declares no containers", async () => {
+    const report = await reportOf(fixture("a16"));
+    expect(brief(report)).toEqual(load("a16.json"));
+  });
+
   it("A9: unsafe constructs are reported and never evaluated; names and secrets are safe", async () => {
     const dir = copyFixture("a9");
     const report = await reportOf(dir);

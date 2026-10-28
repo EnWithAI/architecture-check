@@ -5,6 +5,14 @@ minor versions may break the report schema, which carries its own `schema_versio
 
 ## Unreleased
 
+- A single-package repository (root `package.json`, not a workspace root, and no compose, Dockerfile, Kubernetes,
+  declared source or workspace-package container) is derived as one container with source `.` (origin
+  `root-package`, evidence kind `package-manifest`) instead of an empty model (D-100).
+- `commons.source "."` is valid: it maps a declared container to the repository root instead of reporting
+  `element-source-missing` (D-100).
+- `interface-unowned` is a hypothesis, not verified, when the model declares no containers (D-101).
+- Acceptance scenarios A15 (single-package repository) and A16 (context-level model with an API description).
+
 ## 0.1.0 — 2026-10-27
 
 First release (developed as 0.1.0-alpha.0; released directly as 0.1.0 so that plain `npm install` and `npx`
