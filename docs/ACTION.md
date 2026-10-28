@@ -41,4 +41,6 @@ Upload the SARIF file in a separate step that you add, with `security-events: wr
 The action is tested in-process (`test/action.test.ts`), and the repository's CI runs it on the demo for every pull
 request (`action-self-test`). First run on GitHub: 2026-10-27, EnWithAI/architecture-check#1, passed (4 findings,
 policy fail, report artifact uploaded). In that job `npm ci` had already run, so the dependency-install step of the
-action was skipped; a consumer workflow that pins a release will exercise it.
+action was skipped. A second job, `action-clean-install`, removes `node_modules` after the build so that the action
+installs its own dependency as it does for a consumer; it checks that only `yaml` was installed, the outputs, and that
+`fail-on-policy: "true"` fails the step.

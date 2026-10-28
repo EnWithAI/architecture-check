@@ -62,3 +62,50 @@ jobs:
           name: architecture-check-report
           path: architecture-check-report/
           retention-days: 7
+
+  # Runs the action the way a consumer gets it from a release tag: dist/ present, node_modules absent, so the action's
+  # own dependency-install step (npm ci --omit=dev --ignore-scripts) runs. Then checks that only production
+  # dependencies were installed, the outputs, and that fail-on-policy fails the step.
+  action-clean-install:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - run: npm ci --ignore-scripts && npm run build && rm -rf node_modules
+      - id: report-only
+        uses: ./
+        with:
+          working-directory: examples/demo
+          graph: graph.json
+          output-dir: clean-install-report
+      - name: Check the installed dependencies and the outputs
+        env:
+          FINDINGS: ${{ steps.report-only.outputs.findings }}
+          POLICY: ${{ steps.report-only.outputs.policy }}
+          STATUS: ${{ steps.report-only.outputs.status }}
+        run: |
+          test -f node_modules/yaml/package.json
+          test ! -e node_modules/typescript
+          test ! -e node_modules/vitest
+          test "$FINDINGS" = 4
+          test "$POLICY" = failed
+          test "$STATUS" = ok
+          for f in json md sarif; do test -s "clean-install-report/architecture-check-report.$f"; done
+      - id: blocking
+        continue-on-error: true
+        uses: ./
+        with:
+          working-directory: examples/demo
+          graph: graph.json
+          output-dir: clean-install-report-blocking
+          fail-on-policy: "true"
+      - name: Check that fail-on-policy failed the step
+        env:
+          OUTCOME: ${{ steps.blocking.outcome }}
+        run: test "$OUTCOME" = failure
