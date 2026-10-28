@@ -5,6 +5,12 @@ minor versions may break the report schema, which carries its own `schema_versio
 
 ## Unreleased
 
+## 0.2.0 — 2026-10-28
+
+Fixes from the first consumer run (EnWithAI/impact-check#4).
+
+- Report schema `1.1` (D-102): `origin` gains `root-package` and evidence `kind` gains `package-manifest`; nothing
+  else changes.
 - A single-package repository (root `package.json`, not a workspace root, and no compose, Dockerfile, Kubernetes,
   declared source or workspace-package container) is derived as one container with source `.` (origin
   `root-package`, evidence kind `package-manifest`) instead of an empty model (D-100).
@@ -12,6 +18,8 @@ minor versions may break the report schema, which carries its own `schema_versio
   `element-source-missing` (D-100).
 - `interface-unowned` is a hypothesis, not verified, when the model declares no containers (D-101).
 - Acceptance scenarios A15 (single-package repository) and A16 (context-level model with an API description).
+- CI: `action-clean-install` runs the action with no `node_modules`, so its own dependency-install step is tested on
+  every pull request.
 
 ## 0.1.0 — 2026-10-27
 

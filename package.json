@@ -1,6 +1,6 @@
 {
   "name": "@enwithai/architecture-check",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Deterministic, offline drift checks between a C4/CALM architecture model committed in git and the code, deployment files and API descriptions beside it.",
   "license": "MIT",
   "author": "EnWithAI Technologies",

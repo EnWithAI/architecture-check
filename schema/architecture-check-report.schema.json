@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/enwithai/architecture-check/schema/architecture-check-report.schema.json",
   "title": "Architecture Check report",
-  "description": "Drift between a declared architecture model (Structurizr DSL or FINOS CALM) and the as-built model derived from static evidence. Schema 1.0. There is no score.",
+  "description": "Drift between a declared architecture model (Structurizr DSL or FINOS CALM) and the as-built model derived from static evidence. Schema 1.1. There is no score.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "1.0"
+      "const": "1.1"
     },
     "kind": {
       "const": "architecture-check-report"
