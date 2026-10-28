@@ -43,4 +43,5 @@ request (`action-self-test`). First run on GitHub: 2026-10-27, EnWithAI/architec
 policy fail, report artifact uploaded). In that job `npm ci` had already run, so the dependency-install step of the
 action was skipped. A second job, `action-clean-install`, removes `node_modules` after the build so that the action
 installs its own dependency as it does for a consumer; it checks that only `yaml` was installed, the outputs, and that
-`fail-on-policy: "true"` fails the step.
+`fail-on-policy: "true"` fails the step. First run on GitHub: 2026-10-28, EnWithAI/architecture-check#4, passed (the
+install step added 1 package, `yaml`).

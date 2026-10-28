@@ -30,7 +30,8 @@ npm release of 0.1.0 approved by the user on 2026-10-27, published by the user w
       YAML bomb); clean install; dependency/licence review.
 - [x] P4: Action implemented and tested in-process; least privilege, env-passed inputs, `pull_request` only. Run on
       GitHub runners 2026-10-27 (see "GitHub verification"). The action's own dependency-install step was skipped in that
-      run because the job had already run `npm ci`; it is not yet exercised on a runner.
+      run because the job had already run `npm ci`; the `action-clean-install` job exercised it on a runner on
+      2026-10-28 (EnWithAI/architecture-check#4).
 - [x] P5: README with a 60-second demo, SPEC, CONFIG, ACTION, ARCHITECTURE, THREAT_MODEL, SECURITY, CONTRIBUTING,
       CODE_OF_CONDUCT, CHANGELOG, LICENSE, NOTICE, ATTRIBUTION, TRADEMARKS, REFERENCES, provenance file, issue/PR
       templates, CI workflow (actions pinned by SHA). Demo output audited by hand: 4/4 findings point at the correct
@@ -40,11 +41,12 @@ npm release of 0.1.0 approved by the user on 2026-10-27, published by the user w
 
 ## GitHub verification (2026-10-27)
 
-| Check                                                                       | Result                                                                                                                                                                                    |
-| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Repository                                                                  | public `EnWithAI/architecture-check`, `main` = `7aad488`                                                                                                                                  |
-| CI on `main` (run 40509609835)                                              | green on Node 22, 24 and 26: `npm ci`, `check:all`, license audit, `npm pack --dry-run`                                                                                                   |
-| Action self-test (draft #1, empty commit, closed unmerged; run 40509753161) | passed: `uses: ./` on `examples/demo` with `graph: graph.json` reported 4 findings and policy fail (report-only, as expected for the demo); artifact `architecture-check-report` uploaded |
+| Check                                                                       | Result                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Repository                                                                  | public `EnWithAI/architecture-check`, `main` = `7aad488`                                                                                                                                                                                                            |
+| CI on `main` (run 40509609835)                                              | green on Node 22, 24 and 26: `npm ci`, `check:all`, license audit, `npm pack --dry-run`                                                                                                                                                                             |
+| Action self-test (draft #1, empty commit, closed unmerged; run 40509753161) | passed: `uses: ./` on `examples/demo` with `graph: graph.json` reported 4 findings and policy fail (report-only, as expected for the demo); artifact `architecture-check-report` uploaded                                                                           |
+| Action clean install (#4; run 40627428972, 2026-10-28)                      | passed: with `node_modules` removed after the build, the action's install step added 1 package (`yaml`; no dev dependencies); 4 findings, policy `failed`, status `ok`, JSON/Markdown/SARIF written; with `fail-on-policy: "true"` the step failed with exit code 4 |
 
 ## Process note
 
