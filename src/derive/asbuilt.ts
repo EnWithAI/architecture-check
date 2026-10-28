@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 EnWithAI Technologies
 /**
  * Builds the as-built model from static evidence (docs/SPEC.md §3.2–3.5): containers from compose services,
- * Dockerfiles and Kubernetes workloads (plus declared source paths and workspace packages), components and import
+ * Dockerfiles and Kubernetes workloads (plus declared source paths, workspace packages and the root package), components and import
  * relationships from the Impact Check module graph, configuration relationships from compose dependencies and host
  * names in environment values, external systems from vendor SDK imports, and API descriptions.
  */
@@ -68,6 +68,45 @@ export function sortEvidence(evidence: Evidence[]): Evidence[] {
       compareStrings(a.kind, b.kind) ||
       compareStrings(a.detail, b.detail)
   );
+}
+
+interface RootPackage {
+  name: string | null;
+  workspaceRoot: boolean;
+  evidence: Evidence;
+}
+
+/**
+ * Reads the root `package.json`: its `name`, and whether it is a workspace root (`workspaces`, or a
+ * `pnpm-workspace.yaml` beside it). Unparseable manifests count as present, without a name.
+ */
+function readRootPackage(root: string, files: RepoFiles, limitations: Limitations): RootPackage | null {
+  const text = readText(root, "package.json", limitations);
+  if (text === null) return null;
+  let manifest: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = JSON.parse(text);
+    if (parsed !== null && typeof parsed === "object" && !Array.isArray(parsed))
+      manifest = parsed as Record<string, unknown>;
+  } catch {
+    // Treated as a manifest without a name.
+  }
+  const raw = manifest["name"];
+  const name = typeof raw === "string" && raw.trim() !== "" ? raw.trim() : null;
+  const index = text.split("\n").findIndex((line) => /^\s*"name"\s*:/.test(line));
+  const line = name !== null && index >= 0 ? index + 1 : 1;
+  return {
+    name,
+    workspaceRoot: manifest["workspaces"] !== undefined || files.all.includes("pnpm-workspace.yaml"),
+    evidence: {
+      kind: "package-manifest",
+      path: "package.json",
+      line_start: line,
+      line_end: line,
+      provenance: "observed",
+      detail: name === null ? "package.json without a usable name" : `package ${name}`,
+    },
+  };
 }
 
 /** Builds the as-built model. `extraSources` are declared source directories with no deployment descriptor. */
@@ -231,7 +270,7 @@ export function buildAsBuilt(
   // 4. Declared source directories with no deployment descriptor.
   const sourceOwners = (): string[] => [...drafts.values()].flatMap((d) => [...d.sources]);
   for (const path of uniqueSorted(extraSources)) {
-    if (sourceOwners().includes(path)) continue;
+    if (path === "." || sourceOwners().includes(path)) continue;
     const d = draft(path);
     d.origins.add("declared-source");
     d.sources.add(path);
@@ -259,7 +298,24 @@ export function buildAsBuilt(
     }
   }
 
-  // 6. Container elements with stable ids.
+  // 6. The repository root (D-100): a declared `.` source, or the root package when nothing else is a container.
+  const rootDeclared = extraSources.includes(".");
+  if (!sourceOwners().includes(".")) {
+    const manifest = files.all.includes("package.json") ? readRootPackage(root, files, limitations) : null;
+    const rootPackage = manifest !== null && !manifest.workspaceRoot && drafts.size === 0;
+    if (rootDeclared || rootPackage) {
+      const name = manifest?.name ?? "app";
+      const d = draft(drafts.has(name) ? `${name} (repository root)` : name);
+      if (rootDeclared) d.origins.add("declared-source");
+      if (manifest !== null) {
+        d.origins.add("root-package");
+        d.evidence.push(manifest.evidence);
+      }
+      d.sources.add(".");
+    }
+  }
+
+  // 7. Container elements with stable ids.
   const elements: AsBuiltElement[] = [];
   const byId = new Map<string, AsBuiltElement>();
   const idOfDraft = new Map<Draft, string>();
@@ -305,7 +361,7 @@ export function buildAsBuilt(
     return best?.id ?? null;
   };
 
-  // 7. Components and module → element assignment.
+  // 8. Components and module → element assignment.
   const elementOfModule = new Map<string, string>();
   if (graph !== null) {
     const containerIds = elements.map((e) => e.id);
@@ -363,7 +419,7 @@ export function buildAsBuilt(
     }
   }
 
-  // 8. Relationships.
+  // 9. Relationships.
   const relationships = new Map<string, AsBuiltRelationship>();
   const parentOf = (id: string): string | null => byId.get(id)?.parent ?? null;
   const related = (a: string, b: string): boolean => a === b || parentOf(a) === b || parentOf(b) === a;
@@ -492,7 +548,7 @@ export function buildAsBuilt(
     }
   }
 
-  // 9. API descriptions.
+  // 10. API descriptions.
   const interfaces: ApiInterface[] = interfaceDocs
     .map((doc) => ({
       path: doc.file,

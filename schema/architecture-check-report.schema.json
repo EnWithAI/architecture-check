@@ -319,7 +319,8 @@
             "import",
             "external-import",
             "component-directory",
-            "interface-file"
+            "interface-file",
+            "package-manifest"
           ]
         },
         "path": {
@@ -390,6 +391,7 @@
               "kubernetes",
               "declared-source",
               "workspace-package",
+              "root-package",
               "graph",
               "vendor-sdk"
             ]

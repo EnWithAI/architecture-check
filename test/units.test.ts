@@ -424,4 +424,56 @@ describe("mapping edge cases", () => {
       ["s.old", [], "none", true],
     ]);
   });
+
+  it("the repository root (D-100): workspace roots, root sources without a manifest, name clashes", async () => {
+    const containers = async (files: Record<string, string>, command: "analyze" | "derive" = "derive") =>
+      (await reportOf(tempRepo(files), [], command)).as_built.elements.map((e) => [
+        e.name,
+        e.origins,
+        e.source_paths,
+        e.evidence.map((x) => x.detail),
+      ]);
+    // A workspace root is not a container of its own.
+    expect(
+      await containers({ "package.json": '{ "name": "mono", "workspaces": ["packages/*"] }\n' })
+    ).toEqual([]);
+    expect(
+      await containers({ "package.json": '{ "name": "mono" }\n', "pnpm-workspace.yaml": "packages: []\n" })
+    ).toEqual([]);
+    // Another container exists: the root package is not added.
+    expect(await containers({ "package.json": '{ "name": "x" }\n', Dockerfile: "FROM node:22\n" })).toEqual([
+      ["app", ["dockerfile"], ["."], ["FROM node:22"]],
+    ]);
+    // Unparseable manifest: present, without a name.
+    expect(await containers({ "package.json": "{ not json\n" })).toEqual([
+      ["app", ["root-package"], ["."], ["package.json without a usable name"]],
+    ]);
+    // A declared `.` with no manifest, beside a compose service with the fallback name.
+    const model = dslWorkspace(
+      [
+        '        s = softwareSystem "S" {',
+        '            web = container "Web" {',
+        "                properties {",
+        '                    "commons.source" "."',
+        "                }",
+        "            }",
+        '            app = container "App" {',
+        "                properties {",
+        '                    "commons.source" "app"',
+        "                }",
+        "            }",
+        "        }",
+      ].join("\n")
+    );
+    const dir = tempRepo({
+      "architecture/workspace.dsl": model,
+      "docker-compose.yml": "services:\n  app:\n    image: nginx:1.27\n",
+    });
+    const report = await reportOf(dir);
+    expect(report.findings).toEqual([]);
+    expect(report.as_built.elements.map((e) => [e.id, e.name, e.origins, e.source_paths])).toEqual([
+      ["app", "app", ["compose"], []],
+      ["app_repository_root", "app (repository root)", ["declared-source"], ["."]],
+    ]);
+  });
 });
