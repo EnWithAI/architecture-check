@@ -136,7 +136,7 @@ export function analyze(options: AnalyzeOptions): Report {
   const finished = now();
 
   const report: Report = {
-    schema_version: "1.0",
+    schema_version: "1.1",
     kind: "architecture-check-report",
     tool: { name: "architecture-check", version: TOOL_VERSION },
     command: options.command,

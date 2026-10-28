@@ -1,7 +1,30 @@
-# Release readiness — Architecture Check 0.1.0
+# Release readiness — Architecture Check 0.2.0
 
-Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · **Verdict: READY FOR HUMAN REVIEW** (on GitHub;
-npm release of 0.1.0 approved by the user on 2026-10-27, published by the user with 2FA).
+Date: 2026-10-28 · Branch `release/v0.2.0` · **Verdict: READY FOR HUMAN REVIEW**. npm release of 0.2.0 requested by
+the user on 2026-10-28 (version and report schema 1.1 chosen by the user); the user publishes with 2FA.
+
+## 0.2.0 (2026-10-28, Node v25.9.0)
+
+Changes since 0.1.0: D-100 (root package as a container, `commons.source "."`), D-101 (`interface-unowned` is a
+hypothesis with no declared containers), D-102 (report schema 1.1), the `action-clean-install` CI job. Found by the
+first consumer run, EnWithAI/impact-check#4.
+
+| Check            | Command                                                         | Result                                                                                                             |
+| ---------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Full gate        | `npm run check:all`                                             | exit 0: typecheck, lint, format, build; 9 files / 83 tests passed; lines 97.43%, branches 87.59%                   |
+| Acceptance       | `npx vitest run test/acceptance`                                | A1–A16 pass (A15 single-package repository, A16 context-level model)                                               |
+| Licenses         | `node scripts/license-audit.mjs` / `--all`                      | production: 1 package (`yaml`, ISC); all: MIT 81, ISC 4, BSD-3-Clause 1, Apache-2.0 1; disallowed 0                |
+| Package          | `npm pack --dry-run`                                            | 75 files, 62.5 kB                                                                                                  |
+| Clean install    | pack → install the tarball in an empty directory → demo `check` | works; 2 packages installed; exit 4; output identical to `examples/demo/output/architecture-check-report.md`       |
+| Consumer run     | fixed build on Impact Check with `commons.source "."`           | container mapped by source; 11 elements, 31 relationships, 22 API descriptions owned; 0 findings; no ignore needed |
+| Action on GitHub | `action-clean-install` / `action-self-test` (#4, #5)            | green; the action's own install step adds only `yaml`                                                              |
+
+---
+
+# Release readiness — Architecture Check 0.1.0 (history)
+
+Date: 2026-10-27 · Branch `alpha/architecture-check-0.1` · Verdict at the time: READY FOR HUMAN REVIEW (npm release
+of 0.1.0 approved by the user on 2026-10-27, published by the user with 2FA).
 
 ## Verified (commands run on 2026-10-27, Node v25.9.0)
 
