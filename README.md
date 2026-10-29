@@ -24,7 +24,7 @@ runtime calls are invisible to static analysis. There is no architecture score.
 `derive` writes the as-built model as Structurizr DSL or CALM 1.3 JSON, so you can start a model from the code, render
 it in Structurizr, or compare it with `calm diff`.
 
-> Status: **early release** (`0.2.0`, pre-1.0, report schema 1.1). Published on npm as
+> Status: **early release** (`0.2.1`, pre-1.0, report schema 1.1). Published on npm as
 > [`@enwithai/architecture-check`](https://www.npmjs.com/package/@enwithai/architecture-check); see [Install](#install).
 
 ## 60-second demo

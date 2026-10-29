@@ -98,4 +98,4 @@ Action: Declare the external system (and its data-handling notes).
 
 - `static-analysis-only` — Only static evidence is used: runtime calls, service discovery and deploy-time configuration are invisible. Missing evidence is reported as unknown, never as absence.
 
-<sub>Architecture Check 0.2.0 · offline · no code executed · no model used. An EnWithAI Engineering Commons tool · [crewpe.ai](https://crewpe.ai)</sub>
+<sub>Architecture Check 0.2.1 · offline · no code executed · no model used. An EnWithAI Engineering Commons tool · [crewpe.ai](https://crewpe.ai)</sub>

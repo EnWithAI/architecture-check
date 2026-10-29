@@ -1,4 +1,26 @@
-# Release readiness — Architecture Check 0.2.0
+# Release readiness — Architecture Check 0.2.1
+
+Date: 2026-10-29 · Branch `release/v0.2.1` · **Verdict: READY FOR HUMAN REVIEW**. Release PR requested by the user
+on 2026-10-29; tag, GitHub release and npm publish (by the user, 2FA) each need approval.
+
+## 0.2.1 (2026-10-29, Node v25.9.0)
+
+Changes since 0.2.0: D-103 (the walk honours `.gitignore` and `.git/info/exclude`; new `gitignored-skipped`
+limitation; `respect_gitignore` config), merged in EnWithAI/architecture-check#7 (`54bf3d1`). Found by running
+Commons Check 0.1.1 on the Engineering Commons workspace. Report schema stays `1.1` (limitation codes are free strings).
+
+| Check         | Command                                                         | Result                                                                                                     |
+| ------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Full gate     | `npm run check:all`                                             | exit 0: typecheck, lint, format, build; 9 files / 85 tests passed; lines 97.36%, branches 87.88%           |
+| Licenses      | `node scripts/license-audit.mjs` / `--all`                      | production: 1 package (`yaml`, ISC); all: MIT 81, ISC 4, BSD-3-Clause 1, Apache-2.0 1; disallowed 0        |
+| Package       | `npm pack --dry-run`                                            | 77 files, 64.7 kB; local pack shasum `3b41634b6fdde91129cc95bbc80933a8d9eac5fd` (from this branch, no tag) |
+| Clean install | pack → install the tarball in an empty directory → demo `check` | works; 2 packages installed; `--version` 0.2.1; exit 4; output identical to the committed sample           |
+| Consumer run  | tarball build, `derive` on the Engineering Commons workspace    | 0 as-built elements (0.2.0: 8 from test fixtures); `gitignored-skipped` lists 10 paths                     |
+| CI on GitHub  | EnWithAI/architecture-check#7                                   | 5 checks green                                                                                             |
+
+---
+
+# Release readiness — Architecture Check 0.2.0 (history)
 
 Date: 2026-10-28 · Branch `release/v0.2.0` · **Verdict: READY FOR HUMAN REVIEW**. npm release of 0.2.0 requested by
 the user on 2026-10-28 (version and report schema 1.1 chosen by the user); the user publishes with 2FA.
