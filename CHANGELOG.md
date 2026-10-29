@@ -5,6 +5,11 @@ minor versions may break the report schema, which carries its own `schema_versio
 
 ## Unreleased
 
+- The repository walk honours `.gitignore` files and `.git/info/exclude` (D-103). Previously git-ignored directories,
+  such as nested repositories or generated manifests, were walked and could put their Dockerfiles and compose
+  services into the as-built model. Skipped paths are listed in the new `gitignored-skipped` limitation; config
+  `respect_gitignore: false` restores the old walk. Matching runs in process; git is never executed.
+
 ## 0.2.0 — 2026-10-28
 
 Fixes from the first consumer run (EnWithAI/impact-check#4).

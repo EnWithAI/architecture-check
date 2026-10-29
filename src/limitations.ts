@@ -21,6 +21,8 @@ export const LIMITATION_MESSAGES: Readonly<Record<string, string>> = {
   "iac-not-evaluated": "Terraform, OpenTofu, Pulumi and CDK files are not evaluated.",
   "yaml-unparseable": "These YAML/JSON files could not be parsed and contributed nothing.",
   "symlink-skipped": "Symbolic links are never followed.",
+  "gitignored-skipped":
+    "Paths ignored by .gitignore or .git/info/exclude were not walked (set respect_gitignore to false to include them).",
   "file-too-large": "Files over 1 MiB are not parsed.",
   "file-not-utf8": "Files that are not valid UTF-8 are not parsed.",
   "file-list-cap":

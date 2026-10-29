@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { familiesOfText, familyOfImage, isDatastore } from "../src/derive/technology.js";
 import { packageOf, vendorOf } from "../src/derive/vendors.js";
+import { isGitignored, parseGitignore } from "../src/input/gitignore.js";
 import { Limitations } from "../src/limitations.js";
 import { readCalm } from "../src/model/calm.js";
 import { readDsl } from "../src/model/dsl.js";
@@ -337,6 +338,65 @@ describe("repository walk and limitations", () => {
       ["py", ["dockerfile", "kubernetes"], "Python"],
     ]);
     expect(report.findings).toEqual([]);
+  });
+
+  it(".gitignore files and .git/info/exclude keep ignored paths out of the walk (D-103)", async () => {
+    const compose = (service: string): string => `services:\n  ${service}:\n    image: nginx:1.27\n`;
+    const dir = tempRepo({
+      ".gitignore": "# nested product repositories\nvendored/\ncompose.*.yml\n!compose.keep.yml\n",
+      ".git/info/exclude": "scratch\n",
+      "compose.yml": compose("web"),
+      "vendored/compose.yml": compose("vendored"),
+      "compose.override.yml": compose("override"),
+      "compose.keep.yml": compose("kept"),
+      "scratch/compose.yml": compose("scratch"),
+      "tools/.gitignore": "/fixtures/\n",
+      "tools/fixtures/compose.yml": compose("fixture"),
+      "tools/other/fixtures/compose.yml": compose("deep_fixture"),
+    });
+    const names = (r: Awaited<ReturnType<typeof reportOf>>): string[] =>
+      r.as_built.elements.map((e) => e.name).sort();
+    const report = await reportOf(dir, [], "derive");
+    expect(names(report)).toEqual(["deep_fixture", "kept", "web"]);
+    const skipped = report.coverage_limitations.find((l) => l.code === "gitignored-skipped");
+    expect(skipped?.paths).toEqual(["compose.override.yml", "scratch", "tools/fixtures", "vendored"]);
+
+    writeFileSync(join(dir, ".architecture-check.json"), JSON.stringify({ respect_gitignore: false }));
+    const all = await reportOf(dir, [], "derive");
+    expect(names(all)).toEqual(["deep_fixture", "fixture", "kept", "override", "scratch", "vendored", "web"]);
+    expect(all.coverage_limitations.some((l) => l.code === "gitignored-skipped")).toBe(false);
+
+    writeFileSync(join(dir, ".architecture-check.json"), JSON.stringify({ respect_gitignore: "yes" }));
+    await expect(reportOf(dir, [], "derive")).rejects.toThrow(/exited 2/);
+  });
+
+  it("gitignore pattern semantics", () => {
+    const rules = [
+      ...parseGitignore(
+        "*.log\n!important.log\nbuild/\n/root-only\ndocs/**/draft.md\na/**\n\\#hash\nfoo\\ \n[ab]?.txt\n",
+        "."
+      ),
+      ...parseGitignore("local\n", "pkg"),
+    ];
+    const ignored = (p: string, dir = false): boolean => isGitignored(p, dir, rules);
+    expect(ignored("x/debug.log")).toBe(true);
+    expect(ignored("x/important.log")).toBe(false);
+    expect(ignored("x/build", true)).toBe(true);
+    expect(ignored("x/build")).toBe(false);
+    expect(ignored("root-only")).toBe(true);
+    expect(ignored("x/root-only")).toBe(false);
+    expect(ignored("docs/draft.md")).toBe(true);
+    expect(ignored("docs/a/b/draft.md")).toBe(true);
+    expect(ignored("a/x/y")).toBe(true);
+    expect(ignored("a", true)).toBe(false);
+    expect(ignored("#hash")).toBe(true);
+    expect(ignored("foo ")).toBe(true);
+    expect(ignored("a1.txt")).toBe(true);
+    expect(ignored("c1.txt")).toBe(false);
+    expect(ignored("pkg/local")).toBe(true);
+    expect(ignored("pkg/sub/local")).toBe(true);
+    expect(ignored("local")).toBe(false);
+    expect(parseGitignore("# only\n\n   \n/\n", ".")).toEqual([]);
   });
 
   it("malformed graph files are input errors", async () => {

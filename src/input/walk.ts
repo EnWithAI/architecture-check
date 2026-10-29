@@ -2,12 +2,14 @@
 // SPDX-FileCopyrightText: 2026 EnWithAI Technologies
 /**
  * Repository walk (docs/SPEC.md §3.1): lists files without following symbolic links, skips build and dependency
- * directories and configured ignores, caps depth and entry count, and classifies deployment, IaC and API files.
+ * directories, configured ignores and git-ignored paths, caps depth and entry count, and classifies deployment, IaC
+ * and API files.
  */
 import { existsSync, lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { matchesAny } from "../config.js";
 import type { Limitations } from "../limitations.js";
+import { type GitignoreRule, isGitignored, parseGitignore } from "./gitignore.js";
 import { compareStrings, dirOf } from "../util/paths.js";
 
 /** Directories never entered. */
@@ -45,12 +47,27 @@ export function isComposeFile(base: string): boolean {
   return /^(docker-)?compose(\.[\w-]+)?\.ya?ml$/.test(base);
 }
 
-/** Walks the repository under `root`. `exclude` lists repository-relative files never classified. */
+/** Reads a `.gitignore`-format file as rules for directory `base`; missing, linked or oversized files give none. */
+function gitignoreRules(root: string, rel: string, base: string): GitignoreRule[] {
+  try {
+    const stat = lstatSync(join(root, rel));
+    if (!stat.isFile() || stat.size > MAX_FILE_BYTES) return [];
+    return parseGitignore(readFileSync(join(root, rel), "utf8"), base);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Walks the repository under `root`. `exclude` lists repository-relative files never classified. With
+ * `respectGitignore`, `.git/info/exclude` and every `.gitignore` on the way down are honoured (D-103).
+ */
 export function walkRepository(
   root: string,
   ignore: readonly string[],
   exclude: ReadonlySet<string>,
-  limitations: Limitations
+  limitations: Limitations,
+  respectGitignore = true
 ): RepoFiles {
   const files: RepoFiles = {
     all: [],
@@ -65,7 +82,7 @@ export function walkRepository(
   let entries = 0;
   let capped = false;
 
-  const visit = (dir: string, depth: number): void => {
+  const visit = (dir: string, depth: number, inherited: readonly GitignoreRule[]): void => {
     if (capped) return;
     if (depth > MAX_DEPTH) {
       capped = true;
@@ -78,6 +95,10 @@ export function walkRepository(
     } catch {
       return;
     }
+    const rules =
+      respectGitignore && names.includes(".gitignore")
+        ? [...inherited, ...gitignoreRules(root, dir === "." ? ".gitignore" : `${dir}/.gitignore`, dir)]
+        : inherited;
     for (const name of names) {
       const rel = dir === "." ? name : `${dir}/${name}`;
       if (++entries > MAX_ENTRIES) {
@@ -96,15 +117,19 @@ export function walkRepository(
         limitations.add("symlink-skipped", rel);
         continue;
       }
+      if (stat.isDirectory() && SKIP_DIRS.has(name)) continue;
+      if (rules.length > 0 && isGitignored(rel, stat.isDirectory(), rules)) {
+        limitations.add("gitignored-skipped", rel);
+        continue;
+      }
       if (stat.isDirectory()) {
-        if (SKIP_DIRS.has(name)) continue;
         files.directories.add(rel);
         if (existsSync(join(root, rel, "Chart.yaml"))) {
           helmCharts.push(rel);
           limitations.add("helm-not-rendered", rel);
           continue;
         }
-        visit(rel, depth + 1);
+        visit(rel, depth + 1, rules);
         continue;
       }
       if (!stat.isFile()) continue;
@@ -125,7 +150,7 @@ export function walkRepository(
       else if (/\.json$/i.test(name) && /(openapi|swagger|asyncapi)/i.test(name)) files.apiJson.push(rel);
     }
   };
-  visit(".", 0);
+  visit(".", 0, respectGitignore ? gitignoreRules(root, ".git/info/exclude", ".") : []);
   for (const list of [
     files.all,
     files.dockerfiles,
