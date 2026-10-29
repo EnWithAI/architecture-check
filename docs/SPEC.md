@@ -40,6 +40,11 @@ All inputs are local files. Paths in the report are relative to `--cwd` (the rep
 
 - Depth ≤ 20, at most 20,000 entries (`file-list-cap`). Skipped directories: `.git`, `node_modules`, `dist`, `build`,
   `coverage`, `.next`, `vendor`, `target`, and anything matching config `ignore` globs.
+- Git-ignored paths are not walked (D-103): `.git/info/exclude` under `--cwd` and every `.gitignore` met on the way
+  down, with git's pattern rules (negation, directory-only, anchoring, `**`; last match wins; nothing under an ignored
+  directory is re-included). Each skipped path is listed in `gitignored-skipped`. Git is never run, so the global
+  `core.excludesFile` and `.gitignore` files above `--cwd` are not read. Config `respect_gitignore: false` turns this
+  off.
 - Symbolic links are never followed (`symlink-skipped`). Files over 1 MiB are not parsed (`file-too-large`).
   Files that are not valid UTF-8 are not parsed (`file-not-utf8`).
 - Classification by base name:
@@ -352,3 +357,4 @@ The exact expected findings are in `test/acceptance/expected/*.json`, written be
 | D-100 | The repository root is a container in two cases: `commons.source "."` declares it, or a root `package.json` that is not a workspace root is the only code unit (no compose, Dockerfile, Kubernetes, declared source or workspace package container). A single-package repository therefore derives one container instead of an empty model. The root package is never `container-undeclared`. Origin `root-package` and evidence kind `package-manifest` are new enum values (report schema 1.1, D-102). Found by the first consumer run (Impact Check). |
 | D-101 | `interface-unowned` is a hypothesis when no in-scope container is declared (a context-level model): D-092's "every declared container has `commons.source`" is then vacuously true, and ownership cannot be judged. The finding is kept, not skipped, so the API description still shows up. `container-undeclared` keeps D-092 as it is: with no declared containers, a deployable unit is missing from the model as a fact.                                                                                                                            |
 | D-102 | Release 0.2.0 moves the report to schema `1.1`: D-100 adds enum values (`root-package`, `package-manifest`) that a strict validator of the 1.0 schema rejects. The shape is otherwise unchanged; readers that accept 1.0 can read 1.1 by allowing the new values.                                                                                                                                                                                                                                                                                        |
+| D-103 | The repository walk honours `.gitignore` and `.git/info/exclude` by default, matched in process (no `child_process`). Found by dogfooding: in a workspace whose `.gitignore` excludes nested product repositories, the as-built model was built from another tool's test fixtures, while Impact Check and Product Check (which respect git) saw none of those files. Skipped paths are listed as the `gitignored-skipped` limitation so nothing is silently out of scope; `respect_gitignore: false` restores the 0.2.0 walk.                            |

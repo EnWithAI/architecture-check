@@ -14,18 +14,20 @@ export interface Config {
   graph: string | null;
   systemName: string;
   ignore: string[];
+  respectGitignore: boolean;
   ignoreContainers: string[];
   externalSdks: Record<string, string>;
   failOnSeverity: Severity | "never";
   failOnStatuses: Status[];
 }
 
-/** Defaults: no ignores, policy fails on verified high findings only. */
+/** Defaults: no ignores beyond git's, policy fails on verified high findings only. */
 export const DEFAULT_CONFIG: Config = Object.freeze({
   model: null,
   graph: null,
   systemName: "As-built system",
   ignore: [],
+  respectGitignore: true,
   ignoreContainers: [],
   externalSdks: {},
   failOnSeverity: "high",
@@ -37,6 +39,7 @@ const TOP_KEYS = new Set([
   "graph",
   "system_name",
   "ignore",
+  "respect_gitignore",
   "ignore_containers",
   "external_sdks",
   "policy",
@@ -71,6 +74,11 @@ export function validateConfig(raw: unknown): Config {
     config.systemName = name;
   }
   if (obj["ignore"] !== undefined) config.ignore = stringList(obj["ignore"], "ignore");
+  if (obj["respect_gitignore"] !== undefined) {
+    if (typeof obj["respect_gitignore"] !== "boolean")
+      throw usageError(`Config "respect_gitignore" must be true or false`);
+    config.respectGitignore = obj["respect_gitignore"];
+  }
   if (obj["ignore_containers"] !== undefined)
     config.ignoreContainers = stringList(obj["ignore_containers"], "ignore_containers");
   if (obj["external_sdks"] !== undefined) {

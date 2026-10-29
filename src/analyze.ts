@@ -67,7 +67,7 @@ export function analyze(options: AnalyzeOptions): Report {
   const exclude = new Set<string>();
   if (loaded?.repoPath) exclude.add(loaded.repoPath);
   for (const p of [graphFile, impactFile]) if (p !== null) exclude.add(displayPath(cwd, p));
-  const files = walkRepository(cwd, config.ignore, exclude, limitations);
+  const files = walkRepository(cwd, config.ignore, exclude, limitations, config.respectGitignore);
   if (graph === null) limitations.add("no-module-graph");
   else {
     const missing = graph.modules.filter((m) => !exists(cwd, m.path));

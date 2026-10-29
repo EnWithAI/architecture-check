@@ -21,6 +21,7 @@ All keys are optional.
 | `graph`                   | none                       | `impact-check graph --format json` output, relative to `--cwd`. `--graph` wins.                                          |
 | `system_name`             | `As-built system`          | Name of the software system in `derive` output.                                                                          |
 | `ignore`                  | `[]`                       | Globs (`*`, `**`, `?`) of repository paths that are not walked.                                                          |
+| `respect_gitignore`       | `true`                     | Skip paths ignored by `.gitignore` files and `.git/info/exclude` (listed as `gitignored-skipped`).                       |
 | `ignore_containers`       | `[]`                       | As-built container names (or aliases) never reported as `container-undeclared`; listed in the report.                    |
 | `external_sdks`           | `{}`                       | Extra package (or `prefix/*`) → vendor name entries for `external-system-undeclared`. Checked before the built-in table. |
 | `policy.fail_on_severity` | `high`                     | `high`, `medium`, `low`, `info` or `never`.                                                                              |
