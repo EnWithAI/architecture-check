@@ -5,6 +5,12 @@ minor versions may break the report schema, which carries its own `schema_versio
 
 ## Unreleased
 
+## 0.3.261110 — 2026-11-10
+
+- Version alignment: every EnWithAI Engineering Commons tool now uses `0.3.YYMMDD`, the date of the release
+  (`0.3.261110` = 2026-11-10). It continues from `0.2.1`. No functional change; report and schema versions are
+  unchanged.
+
 ## 0.2.1 — 2026-10-29
 
 Fix from running Commons Check on the Engineering Commons workspace (EnWithAI/architecture-check#7).
